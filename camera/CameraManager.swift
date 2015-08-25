@@ -126,28 +126,16 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     }
 
     /// Property to change camera flash mode.
-    public var flashMode: CameraFlashMode {
-        get {
-            return _flashMode
-        }
-        set(newflashMode) {
-            if newflashMode != _flashMode {
-                _flashMode = newflashMode
-                self._updateFlasMode(newflashMode)
-            }
+    public var flashMode: CameraFlashMode = CameraFlashMode.Off {
+        didSet {
+            self._updateFlasMode(flashMode)
         }
     }
 
     /// Property to change camera output quality.
-    public var cameraOutputQuality: CameraOutputQuality {
-        get {
-            return _cameraOutputQuality
-        }
-        set(newCameraOutputQuality) {
-            if newCameraOutputQuality != _cameraOutputQuality {
-                _cameraOutputQuality = newCameraOutputQuality
-                self._updateCameraQualityMode(newCameraOutputQuality)
-            }
+    public var cameraOutputQuality: CameraOutputQuality = CameraOutputQuality.High {
+        didSet {
+            self._updateCameraQualityMode(cameraOutputQuality)
         }
     }
 
@@ -182,9 +170,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     private var cameraIsObservingDeviceOrientation = false
 
     private var _cameraDevice = CameraDevice.Back
-    private var _flashMode = CameraFlashMode.Off
     private var _cameraOutputMode = CameraOutputMode.StillImage
-    private var _cameraOutputQuality = CameraOutputQuality.High
 
     private var tempFilePath: NSURL = {
         let tempDirURL = NSURL(string: NSTemporaryDirectory())!
@@ -573,7 +559,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
                 self._addVideoInput()
                 self._setupOutputs()
                 self._setupOutputMode(self._cameraOutputMode)
-                self.cameraOutputQuality = self._cameraOutputQuality
+                self._updateCameraQualityMode(self.cameraOutputQuality)
                 self._setupPreviewLayer()
                 validCaptureSession.commitConfiguration()
                 self._updateFlasMode(self.flashMode)
