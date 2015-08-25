@@ -84,44 +84,9 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     }()
     
     /// Property to change camera device between front and back.
-    public var cameraDevice: CameraDevice {
-        get {
-            return _cameraDevice
-        }
-        set(newCameraDevice) {
-            if let validCaptureSession = self.captureSession {
-                validCaptureSession.beginConfiguration()
-                let inputs = validCaptureSession.inputs as! [AVCaptureInput]
-
-                switch newCameraDevice {
-                case .Front:
-                    if self.hasFrontCamera {
-                        if let validBackDevice = self.rearCamera {
-                            if inputs.contains(validBackDevice) {
-                                validCaptureSession.removeInput(validBackDevice)
-                            }
-                        }
-                        if let validFrontDevice = self.frontCamera {
-                            if !inputs.contains(validFrontDevice) {
-                                validCaptureSession.addInput(validFrontDevice)
-                            }
-                        }
-                    }
-                case .Back:
-                    if let validFrontDevice = self.frontCamera {
-                        if inputs.contains(validFrontDevice) {
-                            validCaptureSession.removeInput(validFrontDevice)
-                        }
-                    }
-                    if let validBackDevice = self.rearCamera {
-                        if !inputs.contains(validBackDevice) {
-                            validCaptureSession.addInput(validBackDevice)
-                        }
-                    }
-                }
-                validCaptureSession.commitConfiguration()
-            }
-            _cameraDevice = newCameraDevice
+    public var cameraDevice: CameraDevice = CameraDevice.Back {
+        didSet {
+            self._updateCameraDevice()
         }
     }
 
@@ -135,7 +100,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     /// Property to change camera output quality.
     public var cameraOutputQuality: CameraOutputQuality = CameraOutputQuality.High {
         didSet {
-            self._updateCameraQualityMode(cameraOutputQuality)
+            self._updateCameraQualityMode()
         }
     }
 
@@ -163,8 +128,6 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
 
     private var cameraIsSetup = false
     private var cameraIsObservingDeviceOrientation = false
-
-    private var _cameraDevice = CameraDevice.Back
 
     private var tempFilePath: NSURL = {
         let tempDirURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
@@ -553,11 +516,11 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
                 self._addVideoInput()
                 self._setupOutputs()
                 self._setupOutputMode(self.cameraOutputMode)
-                self._updateCameraQualityMode(self.cameraOutputQuality)
+                self._updateCameraQualityMode()
                 self._setupPreviewLayer()
                 validCaptureSession.commitConfiguration()
                 self._updateFlasMode(self.flashMode)
-                self._updateCameraQualityMode(self.cameraOutputQuality)
+                self._updateCameraQualityMode()
                 validCaptureSession.startRunning()
                 self._startFollowingDeviceOrientation()
                 self.cameraIsSetup = true
@@ -645,7 +608,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
                 return
             }
         }
-        self.cameraDevice = _cameraDevice
+        self._updateCameraDevice()
     }
 
     private func _setupMic()
@@ -703,7 +666,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
             }
         }
         self.captureSession?.commitConfiguration()
-        self._updateCameraQualityMode(self.cameraOutputQuality)
+        self._updateCameraQualityMode()
         self._orientationChanged()
     }
     
@@ -728,6 +691,42 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
+    private func _updateCameraDevice()
+    {
+        if let validCaptureSession = self.captureSession {
+            validCaptureSession.beginConfiguration()
+            let inputs = validCaptureSession.inputs as! [AVCaptureInput]
+            
+            switch cameraDevice {
+            case .Front:
+                if self.hasFrontCamera {
+                    if let validBackDevice = self.rearCamera {
+                        if inputs.contains(validBackDevice) {
+                            validCaptureSession.removeInput(validBackDevice)
+                        }
+                    }
+                    if let validFrontDevice = self.frontCamera {
+                        if !inputs.contains(validFrontDevice) {
+                            validCaptureSession.addInput(validFrontDevice)
+                        }
+                    }
+                }
+            case .Back:
+                if let validFrontDevice = self.frontCamera {
+                    if inputs.contains(validFrontDevice) {
+                        validCaptureSession.removeInput(validFrontDevice)
+                    }
+                }
+                if let validBackDevice = self.rearCamera {
+                    if !inputs.contains(validBackDevice) {
+                        validCaptureSession.addInput(validBackDevice)
+                    }
+                }
+            }
+            validCaptureSession.commitConfiguration()
+        }
+    }
+
     private func _updateFlasMode(flashMode: CameraFlashMode)
     {
         self.captureSession?.beginConfiguration()
@@ -750,11 +749,11 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         self.captureSession?.commitConfiguration()
     }
     
-    private func _updateCameraQualityMode(newCameraOutputQuality: CameraOutputQuality)
+    private func _updateCameraQualityMode()
     {
         if let validCaptureSession = self.captureSession {
             var sessionPreset = AVCaptureSessionPresetLow
-            switch (newCameraOutputQuality) {
+            switch (cameraOutputQuality) {
             case CameraOutputQuality.Low:
                 sessionPreset = AVCaptureSessionPresetLow
             case CameraOutputQuality.Medium:
