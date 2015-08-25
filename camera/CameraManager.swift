@@ -140,14 +140,9 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     }
 
     /// Property to change camera output.
-    public var cameraOutputMode: CameraOutputMode {
-        get {
-            return _cameraOutputMode
-        }
-        set(newCameraOutputMode) {
-            if newCameraOutputMode != _cameraOutputMode {
-                self._setupOutputMode(newCameraOutputMode)
-            }
+    public var cameraOutputMode: CameraOutputMode = CameraOutputMode.StillImage {
+        didSet {
+            self._setupOutputMode(cameraOutputMode)
         }
     }
 
@@ -170,7 +165,6 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     private var cameraIsObservingDeviceOrientation = false
 
     private var _cameraDevice = CameraDevice.Back
-    private var _cameraOutputMode = CameraOutputMode.StillImage
 
     private var tempFilePath: NSURL = {
         let tempDirURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
@@ -197,7 +191,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     */
     public func addPreviewLayerToView(view: UIView) -> CameraState
     {
-        return self.addPreviewLayerToView(view, newCameraOutputMode: _cameraOutputMode)
+        return self.addPreviewLayerToView(view, newCameraOutputMode: cameraOutputMode)
     }
     public func addPreviewLayerToView(view: UIView, newCameraOutputMode: CameraOutputMode) -> CameraState
     {
@@ -558,7 +552,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
                 validCaptureSession.sessionPreset = AVCaptureSessionPresetHigh
                 self._addVideoInput()
                 self._setupOutputs()
-                self._setupOutputMode(self._cameraOutputMode)
+                self._setupOutputMode(self.cameraOutputMode)
                 self._updateCameraQualityMode(self.cameraOutputQuality)
                 self._setupPreviewLayer()
                 validCaptureSession.commitConfiguration()
@@ -667,31 +661,28 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    private func _setupOutputMode(newCameraOutputMode: CameraOutputMode)
+    private func _setupOutputMode(oldCameraOutputMode: CameraOutputMode)
     {
         self.captureSession?.beginConfiguration()
         
-        if (_cameraOutputMode != newCameraOutputMode) {
-            // remove current setting
-            switch _cameraOutputMode {
-            case .StillImage:
-                if let validStillImageOutput = self.stillImageOutput {
-                    self.captureSession?.removeOutput(validStillImageOutput)
-                }
-            case .VideoOnly, .VideoWithMic:
-                if let validMovieOutput = self.movieOutput {
-                    self.captureSession?.removeOutput(validMovieOutput)
-                }
-                if _cameraOutputMode == .VideoWithMic {
-                    if let validMic = self.mic {
-                        self.captureSession?.removeInput(validMic)
-                    }
+        switch oldCameraOutputMode {
+        case .StillImage:
+            if let validStillImageOutput = self.stillImageOutput {
+                self.captureSession?.removeOutput(validStillImageOutput)
+            }
+        case .VideoOnly, .VideoWithMic:
+            if let validMovieOutput = self.movieOutput {
+                self.captureSession?.removeOutput(validMovieOutput)
+            }
+            if oldCameraOutputMode == .VideoWithMic {
+                if let validMic = self.mic {
+                    self.captureSession?.removeInput(validMic)
                 }
             }
         }
         
         // configure new devices
-        switch newCameraOutputMode {
+        switch cameraOutputMode {
         case .StillImage:
             if (self.stillImageOutput == nil) {
                 self._setupOutputs()
@@ -702,7 +693,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         case .VideoOnly, .VideoWithMic:
             self.captureSession?.addOutput(self._getMovieOutput())
             
-            if newCameraOutputMode == .VideoWithMic {
+            if cameraOutputMode == .VideoWithMic {
                 if (self.mic == nil) {
                     self._setupMic()
                 }
@@ -712,7 +703,6 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
             }
         }
         self.captureSession?.commitConfiguration()
-        _cameraOutputMode = newCameraOutputMode;
         self._updateCameraQualityMode(self.cameraOutputQuality)
         self._orientationChanged()
     }
