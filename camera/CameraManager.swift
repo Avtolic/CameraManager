@@ -93,7 +93,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     /// Property to change camera flash mode.
     public var flashMode: CameraFlashMode = CameraFlashMode.Off {
         didSet {
-            self._updateFlasMode(flashMode)
+            self._updateFlasMode()
         }
     }
 
@@ -519,7 +519,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
                 self._updateCameraQualityMode()
                 self._setupPreviewLayer()
                 validCaptureSession.commitConfiguration()
-                self._updateFlasMode(self.flashMode)
+                self._updateFlasMode()
                 self._updateCameraQualityMode()
                 validCaptureSession.startRunning()
                 self._startFollowingDeviceOrientation()
@@ -727,7 +727,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
 
-    private func _updateFlasMode(flashMode: CameraFlashMode)
+    private func _updateFlasMode()
     {
         self.captureSession?.beginConfiguration()
         let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
