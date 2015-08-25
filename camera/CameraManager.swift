@@ -173,7 +173,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     private var _cameraOutputMode = CameraOutputMode.StillImage
 
     private var tempFilePath: NSURL = {
-        let tempDirURL = NSURL(string: NSTemporaryDirectory())!
+        let tempDirURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
         let tempURL = tempDirURL.URLByAppendingPathComponent("tempMovie", isDirectory: false).URLByAppendingPathExtension("mp4")
         if NSFileManager.defaultManager().fileExistsAtPath(tempURL.path!) {
             do {
