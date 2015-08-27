@@ -27,7 +27,7 @@
                 <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bhj-mF-UGn" userLabel="Tools View">
                     <rect key="frame" x="0.0" y="491" width="0.0" height="0.0"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Biw-ZY-jd0">
+                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Biw-ZY-jd0" userLabel="Record">
                             <rect key="frame" x="-42" y="-42" width="84" height="84"/>
                             <state key="normal" image="Record Button"/>
                             <state key="selected" image="Stop Button"/>
@@ -51,21 +51,43 @@
                         </mask>
                     </variation>
                 </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wrR-eS-nG0" userLabel="Cancel Button">
-                    <rect key="frame" x="0.0" y="5" width="73" height="30"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wrR-eS-nG0" userLabel="Cancel">
+                    <rect key="frame" x="5" y="5" width="73" height="30"/>
                     <color key="backgroundColor" white="0.0" alpha="0.10000000000000001" colorSpace="calibratedWhite"/>
                     <state key="normal" title=" &lt; Cancel  ">
                         <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </state>
-                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                        <rect key="frame" x="0.0" y="0.0" width="209" height="30"/>
-                    </variation>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="7"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rotate your phone for a better experience" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xWk-t2-M2J" userLabel="Suggestion Label">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rotate your phone for a better experience" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xWk-t2-M2J" userLabel="Suggestion">
                     <rect key="frame" x="20" y="469" width="560" height="22"/>
                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uzj-U4-rBI" userLabel="Timer">
+                    <rect key="frame" x="265" y="136" width="70" height="21"/>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.35000000000000003" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="70" id="dYN-dR-ZgF"/>
+                        <constraint firstAttribute="height" constant="30" id="fre-2c-dnM"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="7"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <rect key="frame" x="160" y="292" width="80" height="21"/>
+                    </variation>
                 </label>
             </subviews>
             <color key="backgroundColor" white="0.25" alpha="1" colorSpace="calibratedWhite"/>
@@ -80,8 +102,10 @@
                 <constraint firstItem="UDm-PN-Ccf" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="P1F-kK-u7D"/>
                 <constraint firstItem="Bhj-mF-UGn" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.14" identifier="HorizontalWidth" id="Uf4-QT-SKk"/>
                 <constraint firstAttribute="trailing" secondItem="Bhj-mF-UGn" secondAttribute="trailing" identifier="VerticalTrailing" id="X81-ML-GbT"/>
-                <constraint firstItem="wrR-eS-nG0" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="ZM6-AQ-T2r"/>
+                <constraint firstItem="wrR-eS-nG0" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="5" id="ZM6-AQ-T2r"/>
+                <constraint firstItem="uzj-U4-rBI" firstAttribute="top" secondItem="UDm-PN-Ccf" secondAttribute="top" constant="5" id="abl-vE-hNo"/>
                 <constraint firstItem="xWk-t2-M2J" firstAttribute="bottom" secondItem="Bhj-mF-UGn" secondAttribute="top" priority="750" id="dsE-0q-Ezz"/>
+                <constraint firstItem="uzj-U4-rBI" firstAttribute="centerX" secondItem="UDm-PN-Ccf" secondAttribute="centerX" id="elW-Ep-tWH"/>
                 <constraint firstItem="Bhj-mF-UGn" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" identifier="HorizontalBottom" id="g8h-V5-1Tb"/>
                 <constraint firstItem="xWk-t2-M2J" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="vwj-bn-476"/>
                 <constraint firstItem="UDm-PN-Ccf" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="wE6-8E-qmr"/>
