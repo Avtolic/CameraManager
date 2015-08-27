@@ -129,7 +129,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     private var cameraIsSetup = false
     private var cameraIsObservingDeviceOrientation = false
 
-    private var tempFilePath: NSURL = {
+    private var tempFileURL: NSURL = {
         let tempDirURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
         let tempURL = tempDirURL.URLByAppendingPathComponent("tempMovie", isDirectory: false).URLByAppendingPathExtension("mp4")
         if NSFileManager.defaultManager().fileExistsAtPath(tempURL.path!) {
@@ -304,7 +304,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     public func startRecordingVideo()
     {
         if self.cameraOutputMode != .StillImage {
-            self._getMovieOutput().startRecordingToOutputFileURL(self.tempFilePath, recordingDelegate: self)
+            self._getMovieOutput().startRecordingToOutputFileURL(self.tempFileURL, recordingDelegate: self)
         } else {
             self._show(NSLocalizedString("Capture session output still image", comment:""), message: NSLocalizedString("I can only take pictures", comment:""))
         }
