@@ -51,16 +51,21 @@
                         </mask>
                     </variation>
                 </view>
-                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wrR-eS-nG0">
+                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wrR-eS-nG0" userLabel="Cancel Button">
                     <rect key="frame" x="196" y="146" width="209" height="30"/>
-                    <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                    <state key="normal" title="Button"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.10000000000000001" colorSpace="calibratedWhite"/>
+                    <state key="normal" title=" &lt; Cancel  ">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <variation key="heightClass=compact-widthClass=compact" misplaced="YES">
+                        <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
+                    </variation>
                     <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
                         <rect key="frame" x="0.0" y="0.0" width="209" height="30"/>
                     </variation>
                 </button>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <color key="backgroundColor" white="0.25" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="UDm-PN-Ccf" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="BqO-td-OCW"/>
                 <constraint firstItem="Bhj-mF-UGn" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" identifier="HorizontalTop" id="CUe-0L-J1D"/>
@@ -74,7 +79,7 @@
                 <constraint firstItem="Bhj-mF-UGn" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" identifier="HorizontalBottom" id="g8h-V5-1Tb"/>
                 <constraint firstItem="UDm-PN-Ccf" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="wE6-8E-qmr"/>
                 <constraint firstItem="Bhj-mF-UGn" firstAttribute="trailing" secondItem="i5M-Pr-FkT" secondAttribute="trailing" identifier="HorizontalTrailing" id="xdv-rt-ohK"/>
-                <constraint firstItem="wrR-eS-nG0" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="zGl-uI-W2F"/>
+                <constraint firstItem="wrR-eS-nG0" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="5" id="zGl-uI-W2F"/>
             </constraints>
             <variation key="default">
                 <mask key="constraints">
