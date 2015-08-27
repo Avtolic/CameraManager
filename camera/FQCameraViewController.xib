@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8173.3" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FQCameraViewController" customModule="FiddleQuest" customModuleProvider="target">
+            <connections>
+                <outlet property="cameraView" destination="NDW-z1-hSu" id="Aka-jd-nHp"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NDW-z1-hSu" userLabel="Camera View">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bhj-mF-UGn" userLabel="Tools View">
+                    <rect key="frame" x="516" y="0.0" width="84" height="600"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Biw-ZY-jd0">
+                            <rect key="frame" x="0.0" y="258" width="84" height="84"/>
+                            <state key="normal" image="Record Button"/>
+                            <state key="selected" image="Stop Button"/>
+                            <connections>
+                                <action selector="recordingButtonPressed:" destination="-1" eventType="touchUpInside" id="dJf-fs-pSf"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.5" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="Biw-ZY-jd0" firstAttribute="centerX" secondItem="Bhj-mF-UGn" secondAttribute="centerX" id="MAj-76-RPw"/>
+                        <constraint firstItem="Biw-ZY-jd0" firstAttribute="centerY" secondItem="Bhj-mF-UGn" secondAttribute="centerY" id="bFe-qn-Oua"/>
+                    </constraints>
+                    <variation key="heightClass=compact">
+                        <mask key="subviews">
+                            <include reference="Biw-ZY-jd0"/>
+                        </mask>
+                        <mask key="constraints">
+                            <include reference="MAj-76-RPw"/>
+                            <include reference="bFe-qn-Oua"/>
+                        </mask>
+                    </variation>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="XMu-UX-lhL"/>
+                <constraint firstItem="NDW-z1-hSu" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="Xf2-uC-MzB"/>
+                <constraint firstItem="NDW-z1-hSu" firstAttribute="height" secondItem="i5M-Pr-FkT" secondAttribute="height" id="Y6D-mA-tvN"/>
+                <constraint firstAttribute="bottom" secondItem="Bhj-mF-UGn" secondAttribute="bottom" id="a4V-bn-nf7"/>
+                <constraint firstItem="NDW-z1-hSu" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="aBY-bX-jtR"/>
+                <constraint firstAttribute="trailing" secondItem="Bhj-mF-UGn" secondAttribute="trailing" id="otI-RA-yix"/>
+                <constraint firstItem="NDW-z1-hSu" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="xRS-Uh-sUR"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.14" id="yqd-YK-K5A"/>
+            </constraints>
+            <variation key="heightClass=compact">
+                <mask key="subviews">
+                    <include reference="NDW-z1-hSu"/>
+                    <include reference="Bhj-mF-UGn"/>
+                </mask>
+                <mask key="constraints">
+                    <include reference="XMu-UX-lhL"/>
+                    <include reference="a4V-bn-nf7"/>
+                    <include reference="otI-RA-yix"/>
+                    <include reference="yqd-YK-K5A"/>
+                    <include reference="Xf2-uC-MzB"/>
+                    <include reference="Y6D-mA-tvN"/>
+                    <include reference="aBY-bX-jtR"/>
+                    <include reference="xRS-Uh-sUR"/>
+                </mask>
+            </variation>
+        </view>
+    </objects>
+    <resources>
+        <image name="Record Button" width="84" height="84"/>
+        <image name="Stop Button" width="84" height="84"/>
+    </resources>
+</document>

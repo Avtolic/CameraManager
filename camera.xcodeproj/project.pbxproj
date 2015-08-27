@@ -9,11 +9,11 @@
 /* Begin PBXBuildFile section */
 		454C1F4719E82E2500C81915 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454C1F4619E82E2500C81915 /* AppDelegate.swift */; };
 		454C1F4919E82E2500C81915 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454C1F4819E82E2500C81915 /* ViewController.swift */; };
-		454C1F4C19E82E2500C81915 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 454C1F4A19E82E2500C81915 /* Main.storyboard */; };
 		454C1F4E19E82E2500C81915 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 454C1F4D19E82E2500C81915 /* Images.xcassets */; };
 		454C1F5119E82E2500C81915 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 454C1F4F19E82E2500C81915 /* LaunchScreen.xib */; };
 		454C1F6719E8316A00C81915 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454C1F6619E8316A00C81915 /* CameraManager.swift */; };
-		45A23C181A656BDC00FB48F3 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A23C171A656BDC00FB48F3 /* ImageViewController.swift */; };
+		D20B31E71B8F37310055DF54 /* FQCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20B31E51B8F37310055DF54 /* FQCameraViewController.swift */; };
+		D20B31E81B8F37310055DF54 /* FQCameraViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D20B31E61B8F37310055DF54 /* FQCameraViewController.xib */; };
 		D71DE8861AD677A7001E62F1 /* CameraManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D71DE8851AD677A7001E62F1 /* CameraManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D71DE8981AD677A8001E62F1 /* CameraManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D71DE8811AD677A7001E62F1 /* CameraManager.framework */; };
 		D71DE8991AD677A8001E62F1 /* CameraManager.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D71DE8811AD677A7001E62F1 /* CameraManager.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -49,11 +49,11 @@
 		454C1F4519E82E2500C81915 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		454C1F4619E82E2500C81915 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		454C1F4819E82E2500C81915 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		454C1F4B19E82E2500C81915 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		454C1F4D19E82E2500C81915 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		454C1F5019E82E2500C81915 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		454C1F6619E8316A00C81915 /* CameraManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
-		45A23C171A656BDC00FB48F3 /* ImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
+		D20B31E51B8F37310055DF54 /* FQCameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FQCameraViewController.swift; sourceTree = "<group>"; };
+		D20B31E61B8F37310055DF54 /* FQCameraViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FQCameraViewController.xib; sourceTree = "<group>"; };
 		D71DE8811AD677A7001E62F1 /* CameraManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CameraManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D71DE8841AD677A7001E62F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D71DE8851AD677A7001E62F1 /* CameraManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraManager.h; sourceTree = "<group>"; };
@@ -102,7 +102,6 @@
 				454C1F4619E82E2500C81915 /* AppDelegate.swift */,
 				45A23C191A656BE600FB48F3 /* Example app view controllers */,
 				454C1F6619E8316A00C81915 /* CameraManager.swift */,
-				454C1F4A19E82E2500C81915 /* Main.storyboard */,
 				454C1F4D19E82E2500C81915 /* Images.xcassets */,
 				454C1F4F19E82E2500C81915 /* LaunchScreen.xib */,
 				454C1F4419E82E2500C81915 /* Supporting Files */,
@@ -121,8 +120,9 @@
 		45A23C191A656BE600FB48F3 /* Example app view controllers */ = {
 			isa = PBXGroup;
 			children = (
+				D20B31E51B8F37310055DF54 /* FQCameraViewController.swift */,
+				D20B31E61B8F37310055DF54 /* FQCameraViewController.xib */,
 				454C1F4819E82E2500C81915 /* ViewController.swift */,
-				45A23C171A656BDC00FB48F3 /* ImageViewController.swift */,
 			);
 			name = "Example app view controllers";
 			sourceTree = "<group>";
@@ -207,9 +207,11 @@
 				TargetAttributes = {
 					454C1F4019E82E2500C81915 = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = SKG4B289XA;
 					};
 					D71DE8801AD677A7001E62F1 = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = SKG4B289XA;
 					};
 				};
 			};
@@ -237,8 +239,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				454C1F4C19E82E2500C81915 /* Main.storyboard in Resources */,
 				454C1F5119E82E2500C81915 /* LaunchScreen.xib in Resources */,
+				D20B31E81B8F37310055DF54 /* FQCameraViewController.xib in Resources */,
 				454C1F4E19E82E2500C81915 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -259,7 +261,7 @@
 			files = (
 				454C1F4919E82E2500C81915 /* ViewController.swift in Sources */,
 				454C1F6719E8316A00C81915 /* CameraManager.swift in Sources */,
-				45A23C181A656BDC00FB48F3 /* ImageViewController.swift in Sources */,
+				D20B31E71B8F37310055DF54 /* FQCameraViewController.swift in Sources */,
 				454C1F4719E82E2500C81915 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -283,14 +285,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		454C1F4A19E82E2500C81915 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				454C1F4B19E82E2500C81915 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		454C1F4F19E82E2500C81915 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -387,10 +381,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = camera/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cameraDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = cameraDemo2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -399,10 +394,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = camera/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cameraDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = cameraDemo2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -410,6 +406,7 @@
 		D71DE89B1AD677A8001E62F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -436,6 +433,7 @@
 		D71DE89C1AD677A8001E62F1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
