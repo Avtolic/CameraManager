@@ -6,9 +6,8 @@
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FQCameraViewController" customModule="FiddleQuest" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FQCameraViewController" customModule="camera" customModuleProvider="target">
             <connections>
-                <outlet property="cameraView" destination="NDW-z1-hSu" id="Aka-jd-nHp"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -17,14 +16,14 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NDW-z1-hSu" userLabel="Camera View">
-                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UDm-PN-Ccf" userLabel="Preview">
+                    <rect key="frame" x="133" y="273" width="240" height="128"/>
+                    <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bhj-mF-UGn" userLabel="Tools View">
+                <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bhj-mF-UGn" userLabel="Tools View">
                     <rect key="frame" x="516" y="0.0" width="84" height="600"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Biw-ZY-jd0">
+                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Biw-ZY-jd0">
                             <rect key="frame" x="0.0" y="258" width="84" height="84"/>
                             <state key="normal" image="Record Button"/>
                             <state key="selected" image="Stop Button"/>
@@ -48,34 +47,83 @@
                         </mask>
                     </variation>
                 </view>
+                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wrR-eS-nG0">
+                    <rect key="frame" x="196" y="146" width="209" height="30"/>
+                    <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <state key="normal" title="Button"/>
+                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                        <rect key="frame" x="0.0" y="0.0" width="209" height="30"/>
+                    </variation>
+                </button>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="Bhj-mF-UGn" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="XMu-UX-lhL"/>
-                <constraint firstItem="NDW-z1-hSu" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="Xf2-uC-MzB"/>
-                <constraint firstItem="NDW-z1-hSu" firstAttribute="height" secondItem="i5M-Pr-FkT" secondAttribute="height" id="Y6D-mA-tvN"/>
-                <constraint firstAttribute="bottom" secondItem="Bhj-mF-UGn" secondAttribute="bottom" id="a4V-bn-nf7"/>
-                <constraint firstItem="NDW-z1-hSu" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="aBY-bX-jtR"/>
-                <constraint firstAttribute="trailing" secondItem="Bhj-mF-UGn" secondAttribute="trailing" id="otI-RA-yix"/>
-                <constraint firstItem="NDW-z1-hSu" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="xRS-Uh-sUR"/>
-                <constraint firstItem="Bhj-mF-UGn" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.14" id="yqd-YK-K5A"/>
+                <constraint firstItem="UDm-PN-Ccf" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="BqO-td-OCW"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" identifier="HorizontalTop" id="CUe-0L-J1D"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" identifier="VerticalBottom" id="JqK-q6-EFi"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="height" secondItem="i5M-Pr-FkT" secondAttribute="height" multiplier="0.14" identifier="VerticalHeight" id="KqN-xM-VTf"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" identifier="VerticalLeading" id="MFS-cY-MJK"/>
+                <constraint firstItem="UDm-PN-Ccf" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="P1F-kK-u7D"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.14" identifier="HorizontalWidth" id="Uf4-QT-SKk"/>
+                <constraint firstAttribute="trailing" secondItem="Bhj-mF-UGn" secondAttribute="trailing" identifier="VerticalTrailing" id="X81-ML-GbT"/>
+                <constraint firstItem="wrR-eS-nG0" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="ZM6-AQ-T2r"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" identifier="HorizontalBottom" id="g8h-V5-1Tb"/>
+                <constraint firstItem="UDm-PN-Ccf" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="wE6-8E-qmr"/>
+                <constraint firstItem="UDm-PN-Ccf" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="wHl-CR-7g0"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="trailing" secondItem="i5M-Pr-FkT" secondAttribute="trailing" identifier="HorizontalTrailing" id="xdv-rt-ohK"/>
+                <constraint firstItem="wrR-eS-nG0" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="zGl-uI-W2F"/>
             </constraints>
-            <variation key="heightClass=compact">
-                <mask key="subviews">
-                    <include reference="NDW-z1-hSu"/>
-                    <include reference="Bhj-mF-UGn"/>
-                </mask>
+            <variation key="default">
                 <mask key="constraints">
-                    <include reference="XMu-UX-lhL"/>
-                    <include reference="a4V-bn-nf7"/>
-                    <include reference="otI-RA-yix"/>
-                    <include reference="yqd-YK-K5A"/>
-                    <include reference="Xf2-uC-MzB"/>
-                    <include reference="Y6D-mA-tvN"/>
-                    <include reference="aBY-bX-jtR"/>
-                    <include reference="xRS-Uh-sUR"/>
+                    <exclude reference="P1F-kK-u7D"/>
+                    <exclude reference="wHl-CR-7g0"/>
+                    <exclude reference="CUe-0L-J1D"/>
+                    <exclude reference="JqK-q6-EFi"/>
+                    <exclude reference="KqN-xM-VTf"/>
+                    <exclude reference="MFS-cY-MJK"/>
+                    <exclude reference="Uf4-QT-SKk"/>
+                    <exclude reference="X81-ML-GbT"/>
+                    <exclude reference="g8h-V5-1Tb"/>
+                    <exclude reference="xdv-rt-ohK"/>
                 </mask>
             </variation>
+            <variation key="heightClass=compact">
+                <mask key="constraints">
+                    <exclude reference="CUe-0L-J1D"/>
+                    <exclude reference="Uf4-QT-SKk"/>
+                    <exclude reference="g8h-V5-1Tb"/>
+                    <exclude reference="xdv-rt-ohK"/>
+                </mask>
+            </variation>
+            <variation key="widthClass=compact">
+                <mask key="constraints">
+                    <exclude reference="JqK-q6-EFi"/>
+                    <exclude reference="KqN-xM-VTf"/>
+                    <exclude reference="MFS-cY-MJK"/>
+                    <exclude reference="X81-ML-GbT"/>
+                </mask>
+            </variation>
+            <variation key="heightClass=compact-widthClass=compact">
+                <mask key="constraints">
+                    <include reference="P1F-kK-u7D"/>
+                    <include reference="wHl-CR-7g0"/>
+                    <include reference="CUe-0L-J1D"/>
+                    <include reference="Uf4-QT-SKk"/>
+                    <include reference="g8h-V5-1Tb"/>
+                    <include reference="xdv-rt-ohK"/>
+                </mask>
+            </variation>
+            <variation key="heightClass=regular-widthClass=compact">
+                <mask key="constraints">
+                    <include reference="ZM6-AQ-T2r"/>
+                    <include reference="zGl-uI-W2F"/>
+                    <include reference="JqK-q6-EFi"/>
+                    <include reference="KqN-xM-VTf"/>
+                    <include reference="MFS-cY-MJK"/>
+                    <include reference="X81-ML-GbT"/>
+                </mask>
+            </variation>
+            <point key="canvasLocation" x="106" y="170"/>
         </view>
     </objects>
     <resources>
