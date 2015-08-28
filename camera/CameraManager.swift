@@ -111,6 +111,10 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
 
+    public var recordedDuration : CMTime { return movieOutput?.recordedDuration ?? kCMTimeZero }
+    
+    public var recordedFileSize : Int64 { return movieOutput?.recordedFileSize ?? 0 }
+    
     // MARK: - Private properties
 
     private weak var embedingView: UIView?
