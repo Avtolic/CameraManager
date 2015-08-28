@@ -25,6 +25,11 @@
                     <constraints>
                         <constraint firstAttribute="width" secondItem="UDm-PN-Ccf" secondAttribute="height" multiplier="568:320" id="vmE-X2-lct"/>
                     </constraints>
+                    <variation key="heightClass=compact-widthClass=compact">
+                        <mask key="constraints">
+                            <exclude reference="vmE-X2-lct"/>
+                        </mask>
+                    </variation>
                 </view>
                 <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bhj-mF-UGn" userLabel="Tools View">
                     <rect key="frame" x="0.0" y="491" width="0.0" height="0.0"/>
@@ -115,6 +120,7 @@
                 <constraint firstItem="uzj-U4-rBI" firstAttribute="top" secondItem="UDm-PN-Ccf" secondAttribute="top" constant="5" id="abl-vE-hNo"/>
                 <constraint firstItem="xWk-t2-M2J" firstAttribute="bottom" secondItem="Bhj-mF-UGn" secondAttribute="top" priority="750" id="dsE-0q-Ezz"/>
                 <constraint firstItem="uzj-U4-rBI" firstAttribute="centerX" secondItem="UDm-PN-Ccf" secondAttribute="centerX" id="elW-Ep-tWH"/>
+                <constraint firstItem="UDm-PN-Ccf" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="fhu-bd-Rxp"/>
                 <constraint firstItem="Bhj-mF-UGn" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" identifier="HorizontalBottom" id="g8h-V5-1Tb"/>
                 <constraint firstItem="xWk-t2-M2J" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="vwj-bn-476"/>
                 <constraint firstItem="UDm-PN-Ccf" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="wE6-8E-qmr"/>
@@ -123,6 +129,7 @@
             </constraints>
             <variation key="default">
                 <mask key="constraints">
+                    <exclude reference="fhu-bd-Rxp"/>
                     <exclude reference="CUe-0L-J1D"/>
                     <exclude reference="JqK-q6-EFi"/>
                     <exclude reference="KqN-xM-VTf"/>
@@ -138,6 +145,7 @@
                     <exclude reference="xWk-t2-M2J"/>
                 </mask>
                 <mask key="constraints">
+                    <include reference="fhu-bd-Rxp"/>
                     <include reference="CUe-0L-J1D"/>
                     <include reference="Uf4-QT-SKk"/>
                     <include reference="g8h-V5-1Tb"/>
