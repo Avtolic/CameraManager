@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreMedia
 
 @objc protocol FQCameraControllerDelegate : NSObjectProtocol {
     
@@ -23,6 +24,7 @@ class FQCameraViewController: UIViewController {
     weak var delegate:FQCameraControllerDelegate?
     
     @IBOutlet weak var cameraView: UIView!
+    @IBOutlet weak var timerLabel: UILabel!
 
     let cameraManager = CameraManager.sharedInstance
     
@@ -39,7 +41,7 @@ class FQCameraViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        cameraManager.writeFilesToPhoneLibrary = false
+        cameraManager.writeFilesToPhoneLibrary = true
         cameraManager.addPreviewLayerToView(self.cameraView, newCameraOutputMode: CameraOutputMode.VideoWithMic)
         CameraManager.sharedInstance.showErrorBlock = { (erTitle: String, erMessage: String) -> Void in
             let alertController = UIAlertController(title: erTitle, message: erMessage, preferredStyle: .Alert)
@@ -66,47 +68,65 @@ class FQCameraViewController: UIViewController {
     }
     
     @IBAction func recordingButtonPressed(sender: UIButton) {
-        switch (self.cameraManager.cameraOutputMode) {
-        case .VideoWithMic, .VideoOnly:
-            sender.selected = !sender.selected
-            if sender.selected {
-                self.cameraManager.startRecordingVideo()
-            } else {
-                self.cameraManager.stopRecordingVideo({ (videoURL, error) -> Void in
-                    if let errorOccured = error {
-                        self.cameraManager.showErrorBlock(erTitle: "Error occurred", erMessage: errorOccured.localizedDescription)
-                    }
-                    else
-                    {
-                        self.delegate?.cameraController?(self, didFinishRecordingVideoAtURL:videoURL)
-                    }
-                })
-            }
-        default:
+        guard self.cameraManager.cameraOutputMode == .VideoWithMic
+        || self.cameraManager.cameraOutputMode == .VideoOnly else {
             print("ERROR! Unexpected cameraManager.cameraOutputMode")
             self.delegate?.cameraControllerDidCancel?(self)
+            return
+        }
+        
+        sender.selected = !sender.selected
+        if sender.selected {
+            self.cameraManager.startRecordingVideo()
+            startTimer()
+        } else {
+            stopTimer()
+            self.cameraManager.stopRecordingVideo({ (videoURL, error) -> Void in
+                if let errorOccured = error {
+                    self.cameraManager.showErrorBlock(erTitle: "Error occurred", erMessage: errorOccured.localizedDescription)
+                }
+                else
+                {
+                    self.delegate?.cameraController?(self, didFinishRecordingVideoAtURL:videoURL)
+                }
+            })
         }
     }
     
-    override func shouldAutorotate() -> Bool {
-        return false
-    }
-    
-    override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
-        return .LandscapeRight
-    }
-    
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return .LandscapeRight
-    }
-    
+//    override func shouldAutorotate() -> Bool {
+//        return true
+//    }
+//
+//    override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
+//        return .LandscapeRight
+//    }
+//    
+//    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+//        //return .LandscapeRight
+//        return .All
+//    }
+
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        print("viewWillTransitionToSize")
+        print("viewWillTransitionToSize \(size)")
         super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+    }    
+    
+    // MARK: - Timer
+    var timer: NSTimer? = nil
+    func startTimer() {
+        timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("timerUpdated:"), userInfo: nil, repeats: true)
+        timerLabel.text = "00:00"
     }
     
-    override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        print("willAnimateRotationToInterfaceOrientation")
-        super.willAnimateRotationToInterfaceOrientation(toInterfaceOrientation, duration: duration)
+    @objc func timerUpdated(timer: NSTimer) {
+        let timestamp = cameraManager.recordedDuration
+        let sec = Int(CMTimeGetSeconds(timestamp))
+        let avg = cameraManager.recordedFileSize / Int64(1000 * max(1, sec))
+        print(String(format: "%02d:%02d  size = %d   %d kB/sec", sec / 60, sec % 60, cameraManager.recordedFileSize, avg))
+        timerLabel.text = String(format: "%02d:%02d", sec / 60, sec % 60)
+    }
+    
+    func stopTimer() {
+        timer?.invalidate()
     }
 }

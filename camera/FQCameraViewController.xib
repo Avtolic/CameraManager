@@ -10,6 +10,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FQCameraViewController" customModule="camera" customModuleProvider="target">
             <connections>
                 <outlet property="cameraView" destination="UDm-PN-Ccf" id="kgR-wz-Fpg"/>
+                <outlet property="timerLabel" destination="uzj-U4-rBI" id="07n-1h-0wK"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
