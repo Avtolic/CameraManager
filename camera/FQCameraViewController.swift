@@ -61,6 +61,10 @@ class FQCameraViewController: UIViewController {
         cameraManager.stopCaptureSession()
     }
     
+    override func prefersStatusBarHidden() -> Bool {
+        return true;
+    }
+    
     @IBAction func recordingButtonPressed(sender: UIButton) {
         switch (self.cameraManager.cameraOutputMode) {
         case .VideoWithMic, .VideoOnly:
