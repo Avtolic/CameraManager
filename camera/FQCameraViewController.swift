@@ -93,23 +93,19 @@ class FQCameraViewController: UIViewController {
         }
     }
     
-//    override func shouldAutorotate() -> Bool {
-//        return true
-//    }
-//
-//    override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
-//        return .LandscapeRight
-//    }
-//    
-//    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-//        //return .LandscapeRight
-//        return .All
-//    }
+    // MARK: - Autorotation
+    override func shouldAutorotate() -> Bool {
+        return true
+    }
+
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        return .All
+    }
 
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         print("viewWillTransitionToSize \(size)")
         super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-    }    
+    }
     
     // MARK: - Timer
     var timer: NSTimer? = nil
