@@ -86,7 +86,28 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     /// Property to change camera device between front and back.
     public var cameraDevice: CameraDevice = CameraDevice.Back {
         didSet {
-            self._updateCameraDevice()
+            if let validCaptureSession = self.captureSession {
+                validCaptureSession.beginConfiguration()
+                let inputs = validCaptureSession.inputs as! [AVCaptureInput]
+                
+                switch cameraDevice {
+                case .Front:
+                    if let validBackCamera = self.rearCamera where inputs.contains(validBackCamera) {
+                        validCaptureSession.removeInput(validBackCamera)
+                    }
+                    if let validFrontCamera = self.frontCamera where !inputs.contains(validFrontCamera) {
+                        validCaptureSession.addInput(validFrontCamera)
+                    }
+                case .Back:
+                    if let validFrontCamera = self.frontCamera where inputs.contains(validFrontCamera) {
+                        validCaptureSession.removeInput(validFrontCamera)
+                    }
+                    if let validBackCamera = self.rearCamera where !inputs.contains(validBackCamera) {
+                        validCaptureSession.addInput(validBackCamera)
+                    }
+                }
+                validCaptureSession.commitConfiguration()
+            }
         }
     }
 
@@ -676,42 +697,6 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    private func _updateCameraDevice()
-    {
-        if let validCaptureSession = self.captureSession {
-            validCaptureSession.beginConfiguration()
-            let inputs = validCaptureSession.inputs as! [AVCaptureInput]
-            
-            switch cameraDevice {
-            case .Front:
-                if self.hasFrontCamera {
-                    if let validBackDevice = self.rearCamera {
-                        if inputs.contains(validBackDevice) {
-                            validCaptureSession.removeInput(validBackDevice)
-                        }
-                    }
-                    if let validFrontDevice = self.frontCamera {
-                        if !inputs.contains(validFrontDevice) {
-                            validCaptureSession.addInput(validFrontDevice)
-                        }
-                    }
-                }
-            case .Back:
-                if let validFrontDevice = self.frontCamera {
-                    if inputs.contains(validFrontDevice) {
-                        validCaptureSession.removeInput(validFrontDevice)
-                    }
-                }
-                if let validBackDevice = self.rearCamera {
-                    if !inputs.contains(validBackDevice) {
-                        validCaptureSession.addInput(validBackDevice)
-                    }
-                }
-            }
-            validCaptureSession.commitConfiguration()
-        }
-    }
-
     private func _updateFlasMode()
     {
         self.captureSession?.beginConfiguration()
