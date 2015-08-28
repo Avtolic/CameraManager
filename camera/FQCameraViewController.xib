@@ -109,7 +109,7 @@
                 <constraint firstItem="Bhj-mF-UGn" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" identifier="VerticalLeading" id="MFS-cY-MJK"/>
                 <constraint firstItem="UDm-PN-Ccf" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="P1F-kK-u7D"/>
                 <constraint firstItem="Bhj-mF-UGn" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.14" identifier="HorizontalWidth" id="Uf4-QT-SKk"/>
-                <constraint firstAttribute="trailing" secondItem="Bhj-mF-UGn" secondAttribute="trailing" identifier="VerticalTrailing" id="X81-ML-GbT"/>
+                <constraint firstItem="Bhj-mF-UGn" firstAttribute="trailing" secondItem="i5M-Pr-FkT" secondAttribute="trailing" identifier="VerticalTrailing" id="X81-ML-GbT"/>
                 <constraint firstItem="wrR-eS-nG0" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="5" id="ZM6-AQ-T2r"/>
                 <constraint firstItem="uzj-U4-rBI" firstAttribute="top" secondItem="UDm-PN-Ccf" secondAttribute="top" constant="5" id="abl-vE-hNo"/>
                 <constraint firstItem="xWk-t2-M2J" firstAttribute="bottom" secondItem="Bhj-mF-UGn" secondAttribute="top" priority="750" id="dsE-0q-Ezz"/>
@@ -130,14 +130,6 @@
                     <exclude reference="X81-ML-GbT"/>
                     <exclude reference="g8h-V5-1Tb"/>
                     <exclude reference="xdv-rt-ohK"/>
-                </mask>
-            </variation>
-            <variation key="widthClass=compact">
-                <mask key="constraints">
-                    <exclude reference="JqK-q6-EFi"/>
-                    <exclude reference="KqN-xM-VTf"/>
-                    <exclude reference="MFS-cY-MJK"/>
-                    <exclude reference="X81-ML-GbT"/>
                 </mask>
             </variation>
             <variation key="heightClass=compact-widthClass=compact">
