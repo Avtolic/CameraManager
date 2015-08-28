@@ -9,6 +9,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FQCameraViewController" customModule="camera" customModuleProvider="target">
             <connections>
+                <outlet property="cameraView" destination="UDm-PN-Ccf" id="kgR-wz-Fpg"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -131,14 +132,6 @@
                     <exclude reference="xdv-rt-ohK"/>
                 </mask>
             </variation>
-            <variation key="heightClass=compact">
-                <mask key="constraints">
-                    <exclude reference="CUe-0L-J1D"/>
-                    <exclude reference="Uf4-QT-SKk"/>
-                    <exclude reference="g8h-V5-1Tb"/>
-                    <exclude reference="xdv-rt-ohK"/>
-                </mask>
-            </variation>
             <variation key="widthClass=compact">
                 <mask key="constraints">
                     <exclude reference="JqK-q6-EFi"/>
@@ -164,6 +157,14 @@
                     <include reference="KqN-xM-VTf"/>
                     <include reference="MFS-cY-MJK"/>
                     <include reference="X81-ML-GbT"/>
+                </mask>
+            </variation>
+            <variation key="heightClass=regular-widthClass=regular">
+                <mask key="constraints">
+                    <include reference="CUe-0L-J1D"/>
+                    <include reference="Uf4-QT-SKk"/>
+                    <include reference="g8h-V5-1Tb"/>
+                    <include reference="xdv-rt-ohK"/>
                 </mask>
             </variation>
             <point key="canvasLocation" x="106" y="170"/>
