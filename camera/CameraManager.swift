@@ -122,9 +122,6 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
 
     private var sessionQueue: dispatch_queue_t = dispatch_queue_create("CameraSessionQueue", DISPATCH_QUEUE_SERIAL)
 
-    private var frontCamera: AVCaptureInput?
-    private var rearCamera: AVCaptureInput?
-    private var mic: AVCaptureDeviceInput?
     private var stillImageOutput: AVCaptureStillImageOutput?
     private var movieOutput: AVCaptureMovieFileOutput?
     private var previewLayer: AVCaptureVideoPreviewLayer?
@@ -517,7 +514,6 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
             if let validCaptureSession = self.captureSession {
                 validCaptureSession.beginConfiguration()
                 validCaptureSession.sessionPreset = AVCaptureSessionPresetHigh
-                self._addVideoInput()
                 self._setupOutputs()
                 self._setupOutputMode(self.cameraOutputMode)
                 self._updateCameraQualityMode()
@@ -584,49 +580,37 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    private func _addVideoInput()
-    {
-        if (self.frontCamera == nil) || (self.rearCamera == nil) {
-            var videoFrontDevice: AVCaptureDevice?
-            var videoBackDevice: AVCaptureDevice?
-            for device: AnyObject in AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo) {
-                if device.position == AVCaptureDevicePosition.Back {
-                    videoBackDevice = device as? AVCaptureDevice
-                } else if device.position == AVCaptureDevicePosition.Front {
-                    videoFrontDevice = device as? AVCaptureDevice
-                }
-            }
-            do {
-                if (self.frontCamera == nil) {
-                    if let validVideoFrontDevice = videoFrontDevice {
-                        try self.frontCamera = AVCaptureDeviceInput(device: validVideoFrontDevice)
-                    }
-                }
-                if (self.rearCamera == nil) {
-                    if let validVideoBackDevice = videoBackDevice {
-                        try self.rearCamera = AVCaptureDeviceInput(device: validVideoBackDevice)
-                    }
-                }
-            } catch let outError {
-                self._show(NSLocalizedString("Device setup error occured", comment:""), message: "\(outError)")
-                return
-            }
+    lazy var frontCamera: AVCaptureDeviceInput? = {
+        let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo) as! [AVCaptureDevice]
+        let device = devices.filter{$0.position == .Front}.first
+        do {
+            return try AVCaptureDeviceInput(device: device)
+        } catch let outError {
+            self._show(NSLocalizedString("Device setup error occured", comment:""), message: "\(outError)")
+            return nil
         }
-        self._updateCameraDevice()
-    }
+    }()
+    
+    lazy var rearCamera: AVCaptureDeviceInput? = {
+        let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo) as! [AVCaptureDevice]
+        let device = devices.filter{$0.position == .Back}.first
+        do {
+            return try AVCaptureDeviceInput(device: device)
+        } catch let outError {
+            self._show(NSLocalizedString("Device setup error occured", comment:""), message: "\(outError)")
+            return nil
+        }
+    }()
 
-    private func _setupMic()
-    {
-        if (self.mic == nil) {
-            let micDevice:AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeAudio)
-            do {
-                try self.mic = AVCaptureDeviceInput(device: micDevice)
-            } catch let outError {
-                self.mic = nil
-                self._show(NSLocalizedString("Mic error", comment:""), message: "\(outError)")
-            }
+    lazy var mic: AVCaptureDeviceInput? = {
+        let micDevice:AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeAudio)
+        do {
+            return try AVCaptureDeviceInput(device: micDevice)
+        } catch let outError {
+            self._show(NSLocalizedString("Mic error", comment:""), message: "\(outError)")
+            return nil
         }
-    }
+    }()
     
     private func _setupOutputMode(oldCameraOutputMode: CameraOutputMode)
     {
@@ -661,9 +645,6 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
             self.captureSession?.addOutput(self._getMovieOutput())
             
             if cameraOutputMode == .VideoWithMic {
-                if (self.mic == nil) {
-                    self._setupMic()
-                }
                 if let validMic = self.mic {
                     self.captureSession?.addInput(validMic)
                 }
@@ -794,4 +775,13 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         self.stopAndRemoveCaptureSession()
         self._stopFollowingDeviceOrientation()
     }
+    
+//    lazy var videoOutput: AVCaptureVideoDataOutput? = {
+//        let output = AVCaptureVideoDataOutput()
+//        let format = kCVPixelFormatType_32BGRA
+//        output.videoSettings = [kCVPixelBufferPixelFormatTypeKey : format]
+//        output.alwaysDiscardsLateVideoFrames = true
+//        return output
+//        }()
+
 }
