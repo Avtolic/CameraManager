@@ -476,6 +476,7 @@ public class CameraManager: NSObject {
     {
         self.captureSession = AVCaptureSession()
         
+        // TODO: Fix possible synchronisation crash if camera's settings like flash are changed from main queue while this setup is not finished yet
         dispatch_async(sessionQueue, {
             if let validCaptureSession = self.captureSession {
                 validCaptureSession.beginConfiguration()
