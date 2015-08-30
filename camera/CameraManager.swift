@@ -20,10 +20,6 @@ public enum CameraDevice {
     case Front, Back
 }
 
-public enum CameraFlashMode: Int {
-    case Off, On, Auto
-}
-
 public enum CameraOutputMode {
     case StillImage, VideoWithMic, VideoOnly
 }
@@ -33,7 +29,7 @@ public enum CameraOutputQuality: Int {
 }
 
 /// Class for handling iDevices custom camera usage
-public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
+public class CameraManager: NSObject {
 
     // MARK: - Public properties
 
@@ -112,9 +108,9 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     }
 
     /// Property to change camera flash mode.
-    public var flashMode: CameraFlashMode = CameraFlashMode.Off {
+    public var flashMode: AVCaptureFlashMode = .Off {
         didSet {
-            self._updateFlasMode()
+            self.setFlashMode(flashMode)
         }
     }
 
@@ -145,7 +141,6 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     // MARK: - Private properties
 
     private weak var embedingView: UIView?
-    private var videoCompletition: ((videoURL: NSURL, error: NSError?) -> Void)?
 
     private let sessionQueue = dispatch_queue_create("CameraSessionQueue", DISPATCH_QUEUE_SERIAL)
 
@@ -336,9 +331,27 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     /**
     Stop recording a video. Save it to the cameraRoll and give back the url.
     */
-    public func stopRecordingVideo(completition:(videoURL: NSURL, error: NSError?) -> Void)
+    public func stopRecordingVideo(completition:(videoURL: NSURL?, error: NSError?) -> Void)
     {
-        cameraWriter?.stopWithCompletionHandler(completition)
+        cameraWriter?.stopWithCompletionHandler{ (url, error) -> Void in
+            if let error = error
+            {
+                self._show(NSLocalizedString("Unable to save video to the iPhone", comment:""), message: error.localizedDescription)
+                completition(videoURL: nil, error: error)
+            }
+            else if let validLibrary = self.library where self.writeFilesToPhoneLibrary
+            {
+                validLibrary.writeVideoAtPathToSavedPhotosAlbum(url){ (assetURL, error) -> Void in
+                    if let error = error {
+                        self._show(NSLocalizedString("Unable to save video to the iPhone.", comment:""), message: error.localizedDescription)
+                    }
+                    completition(videoURL: assetURL, error: error)
+                }
+            } else
+            {
+                completition(videoURL: url, error: error)
+            }
+        }
     }
 
     /**
@@ -356,9 +369,9 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     
     :returns: Current flash mode: Off / On / Auto
     */
-    public func changeFlashMode() -> CameraFlashMode
+    public func changeFlashMode() -> AVCaptureFlashMode
     {
-        self.flashMode = CameraFlashMode(rawValue: (self.flashMode.rawValue+1)%3)!
+        self.flashMode = AVCaptureFlashMode(rawValue: (self.flashMode.rawValue+1)%3)!
         return self.flashMode
     }
     
@@ -373,72 +386,8 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         return self.cameraOutputQuality
     }
     
-    // MARK: - AVCaptureFileOutputRecordingDelegate
-
-    public func captureOutput(captureOutput: AVCaptureFileOutput!, didStartRecordingToOutputFileAtURL fileURL: NSURL!, fromConnections connections: [AnyObject]!)
-    {
-        self.captureSession?.beginConfiguration()
-        if self.flashMode != .Off {
-            self._updateTorch(self.flashMode)
-        }
-        self.captureSession?.commitConfiguration()
-    }
-
-    public func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!)
-    {
-        self._updateTorch(.Off)
-        if (error != nil) {
-            self._show(NSLocalizedString("Unable to save video to the iPhone", comment:""), message: error.localizedDescription)
-        } else {
-            if let validLibrary = self.library {
-                if self.writeFilesToPhoneLibrary {
-                    validLibrary.writeVideoAtPathToSavedPhotosAlbum(outputFileURL, completionBlock: { (assetURL: NSURL?, error: NSError?) -> Void in
-                        if (error != nil) {
-                            self._show(NSLocalizedString("Unable to save video to the iPhone.", comment:""), message: error!.localizedDescription)
-                        } else {
-                            if let validAssetURL = assetURL {
-                                self._executeVideoCompletitionWithURL(validAssetURL, error: error)
-                            }
-                        }
-                    })
-                } else {
-                    self._executeVideoCompletitionWithURL(outputFileURL, error: error)
-                }
-            }
-        }
-    }
-
     // MARK: - CameraManager()
-
-    private func _updateTorch(flashMode: CameraFlashMode)
-    {
-        self.captureSession?.beginConfiguration()
-        let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
-        for  device in devices  {
-            let captureDevice = device as! AVCaptureDevice
-            if (captureDevice.position == AVCaptureDevicePosition.Back) {
-                let avTorchMode = AVCaptureTorchMode(rawValue: flashMode.rawValue)
-                if (captureDevice.isTorchModeSupported(avTorchMode!)) {
-                    do {
-                        try captureDevice.lockForConfiguration()
-                    } catch {
-                        return;
-                    }
-                    captureDevice.torchMode = avTorchMode!
-                    captureDevice.unlockForConfiguration()
-                }
-            }
-        }
-        self.captureSession?.commitConfiguration()
-    }
     
-    private func _executeVideoCompletitionWithURL(url: NSURL, error: NSError?)
-    {
-        if let validCompletition = self.videoCompletition {
-            validCompletition(videoURL: url, error: error)
-            self.videoCompletition = nil
-        }
-    }
 //
 //    private var _videoOutput: AVCaptureVideoDataOutput? = nil
 //    public var videoOutput: AVCaptureVideoDataOutput {
@@ -536,7 +485,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
                 self._updateCameraQualityMode()
                 self._setupPreviewLayer()
                 validCaptureSession.commitConfiguration()
-                self._updateFlasMode()
+                self.setFlashMode(self.flashMode)
                 self._updateCameraQualityMode()
                 validCaptureSession.startRunning()
                 self._startFollowingDeviceOrientation()
@@ -693,26 +642,54 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    private func _updateFlasMode()
+    func setTorchLevel(torchLevel: Float)
     {
         self.captureSession?.beginConfiguration()
-        let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
-        for  device in devices  {
-            let captureDevice = device as! AVCaptureDevice
-            if (captureDevice.position == AVCaptureDevicePosition.Back) {
-                let avFlashMode = AVCaptureFlashMode(rawValue: flashMode.rawValue)
-                if (captureDevice.isFlashModeSupported(avFlashMode!)) {
-                    do {
-                        try captureDevice.lockForConfiguration()
-                    } catch {
-                        return
-                    }
-                    captureDevice.flashMode = avFlashMode!
-                    captureDevice.unlockForConfiguration()
+        defer {
+            self.captureSession?.commitConfiguration()
+        }
+        
+        if let device = rearCamera?.device where device.hasTorch && device.torchAvailable {
+            do {
+                try device.lockForConfiguration()
+                defer {
+                    device.unlockForConfiguration()
+                }
+            
+                if torchLevel <= 0.0 {
+                    device.torchMode = .Off
+                }
+                else if torchLevel >= 1.0 {
+                    try device.setTorchModeOnWithLevel(min(torchLevel, AVCaptureMaxAvailableTorchLevel))
                 }
             }
+            catch let error {
+                print("Failed to set up torch level with error \(error)")
+                return
+            }
         }
-        self.captureSession?.commitConfiguration()
+    }
+
+    private func setFlashMode(flashMode: AVCaptureFlashMode)
+    {
+        self.captureSession?.beginConfiguration()
+        defer {
+            self.captureSession?.commitConfiguration()
+        }
+        
+        if let device = rearCamera?.device where device.hasFlash && device.flashAvailable && device.isFlashModeSupported(flashMode) {
+            do {
+                try device.lockForConfiguration()
+                defer {
+                    device.unlockForConfiguration()
+                }
+                device.flashMode = flashMode
+            }
+            catch let error {
+                print("Failed to set up flash mode with error \(error)")
+                return
+            }
+        }
     }
     
     private func _updateCameraQualityMode()
