@@ -315,6 +315,11 @@ public class CameraManager: NSObject {
     */
     public func startRecordingVideo()
     {
+        if cameraWriter != nil {
+            print("CameraManager internal error! Seems that recording is sterted before previous one is finished")
+            return
+        }
+        
         if self.cameraOutputMode != .StillImage {
             do {
                 cameraWriter = CameraWriter()
@@ -334,6 +339,12 @@ public class CameraManager: NSObject {
     public func stopRecordingVideo(completition:(videoURL: NSURL?, error: NSError?) -> Void)
     {
         cameraWriter?.stopWithCompletionHandler{ (url, error) -> Void in
+            
+            if let cameraWriter = self.cameraWriter, videoOutput = cameraWriter.videoOutput {
+                self.captureSession?.removeOutput(videoOutput)
+            }
+            self.cameraWriter = nil
+            
             if let error = error
             {
                 self._show(NSLocalizedString("Unable to save video to the iPhone", comment:""), message: error.localizedDescription)
