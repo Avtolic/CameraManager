@@ -132,36 +132,31 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
 
-    public var recordedDuration : CMTime { return movieOutput?.recordedDuration ?? kCMTimeZero }
+    public var recordedDuration : CMTime {
+//        return movieOutput?.recordedDuration ?? kCMTimeZero
+        return kCMTimeZero
+    }
     
-    public var recordedFileSize : Int64 { return movieOutput?.recordedFileSize ?? 0 }
+    public var recordedFileSize : Int64 {
+        //return movieOutput?.recordedFileSize ?? 0 
+        return 0
+    }
     
     // MARK: - Private properties
 
     private weak var embedingView: UIView?
     private var videoCompletition: ((videoURL: NSURL, error: NSError?) -> Void)?
 
-    private var sessionQueue: dispatch_queue_t = dispatch_queue_create("CameraSessionQueue", DISPATCH_QUEUE_SERIAL)
+    private let sessionQueue = dispatch_queue_create("CameraSessionQueue", DISPATCH_QUEUE_SERIAL)
 
     private var stillImageOutput: AVCaptureStillImageOutput?
-    private var movieOutput: AVCaptureMovieFileOutput?
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var library: ALAssetsLibrary?
 
     private var cameraIsSetup = false
     private var cameraIsObservingDeviceOrientation = false
-
-    private var tempFileURL: NSURL = {
-        let tempDirURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
-        let tempURL = tempDirURL.URLByAppendingPathComponent("tempMovie", isDirectory: false).URLByAppendingPathExtension("mp4")
-        if NSFileManager.defaultManager().fileExistsAtPath(tempURL.path!) {
-            do {
-                try NSFileManager.defaultManager().removeItemAtURL(tempURL)
-            } catch {
-            }
-        }
-        return tempURL
-        }()
+    
+    private var cameraWriter: CameraWriter? = nil
     
     
     // MARK: - CameraManager
@@ -326,7 +321,13 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     public func startRecordingVideo()
     {
         if self.cameraOutputMode != .StillImage {
-            self._getMovieOutput().startRecordingToOutputFileURL(self.tempFileURL, recordingDelegate: self)
+            do {
+                cameraWriter = CameraWriter()
+                captureSession?.addOutput(cameraWriter?.videoOutput)
+                try cameraWriter?.start()
+            } catch let error {
+                self._showError(error as NSError)
+            }
         } else {
             self._show(NSLocalizedString("Capture session output still image", comment:""), message: NSLocalizedString("I can only take pictures", comment:""))
         }
@@ -337,12 +338,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
     */
     public func stopRecordingVideo(completition:(videoURL: NSURL, error: NSError?) -> Void)
     {
-        if let runningMovieOutput = self.movieOutput {
-            if runningMovieOutput.recording {
-                self.videoCompletition = completition
-                runningMovieOutput.stopRecording()
-            }
-        }
+        cameraWriter?.stopWithCompletionHandler(completition)
     }
 
     /**
@@ -443,25 +439,23 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
             self.videoCompletition = nil
         }
     }
-
-    private func _getMovieOutput() -> AVCaptureMovieFileOutput
-    {
-        var shouldReinitializeMovieOutput = self.movieOutput == nil
-        if !shouldReinitializeMovieOutput {
-            if let connection = self.movieOutput!.connectionWithMediaType(AVMediaTypeVideo) {
-                shouldReinitializeMovieOutput = shouldReinitializeMovieOutput || !connection.active
-            }
-        }
-        
-        if shouldReinitializeMovieOutput {
-            self.movieOutput = AVCaptureMovieFileOutput()
-            
-            self.captureSession?.beginConfiguration()
-            self.captureSession?.addOutput(self.movieOutput)
-            self.captureSession?.commitConfiguration()
-        }
-        return self.movieOutput!
-    }
+//
+//    private var _videoOutput: AVCaptureVideoDataOutput? = nil
+//    public var videoOutput: AVCaptureVideoDataOutput {
+//        if let vOutput = _videoOutput, connection = vOutput.connectionWithMediaType(AVMediaTypeVideo) where connection.active {
+//            return vOutput
+//        }
+//        _videoOutput = AVCaptureVideoDataOutput()
+//        _videoOutput?.setSampleBufferDelegate(self, queue: sessionQueue)
+//        _videoOutput!.videoSettings = [kCVPixelBufferPixelFormatTypeKey as NSString : NSNumber(int: Int32(kCVPixelFormatType_32BGRA))]
+//        _videoOutput!.alwaysDiscardsLateVideoFrames = true
+//        
+//        captureSession?.beginConfiguration()
+//        captureSession?.addOutput(_videoOutput)
+//        captureSession?.commitConfiguration()
+//        
+//        return _videoOutput!
+//    }
     
     private func _getStillImageOutput() -> AVCaptureStillImageOutput
     {
@@ -488,7 +482,9 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         case .StillImage:
             currentConnection = self.stillImageOutput?.connectionWithMediaType(AVMediaTypeVideo)
         case .VideoOnly, .VideoWithMic:
-            currentConnection = self._getMovieOutput().connectionWithMediaType(AVMediaTypeVideo)
+            // TODO: fix via implementing activeConnection
+            //currentConnection = self._getMovieOutput().connectionWithMediaType(AVMediaTypeVideo)
+            return
         }
         if let validPreviewLayer = self.previewLayer {
             if let validPreviewLayerConnection = validPreviewLayer.connection {
@@ -643,9 +639,9 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
                 self.captureSession?.removeOutput(validStillImageOutput)
             }
         case .VideoOnly, .VideoWithMic:
-            if let validMovieOutput = self.movieOutput {
-                self.captureSession?.removeOutput(validMovieOutput)
-            }
+//            if let validMovieOutput = self.movieOutput {
+//                self.captureSession?.removeOutput(validMovieOutput)
+//            }
             if oldCameraOutputMode == .VideoWithMic {
                 if let validMic = self.mic {
                     self.captureSession?.removeInput(validMic)
@@ -663,7 +659,7 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
                 self.captureSession?.addOutput(validStillImageOutput)
             }
         case .VideoOnly, .VideoWithMic:
-            self.captureSession?.addOutput(self._getMovieOutput())
+//            self.captureSession?.addOutput(self._getMovieOutput())
             
             if cameraOutputMode == .VideoWithMic {
                 if let validMic = self.mic {
@@ -681,9 +677,9 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         if (self.stillImageOutput == nil) {
             self.stillImageOutput = AVCaptureStillImageOutput()
         }
-        if (self.movieOutput == nil) {
-            self.movieOutput = AVCaptureMovieFileOutput()
-        }
+//        if (self.movieOutput == nil) {
+//            self.movieOutput = AVCaptureMovieFileOutput()
+//        }
         if self.library == nil {
             self.library = ALAssetsLibrary()
         }
@@ -747,6 +743,15 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
 
+    private func _showError(error: NSError)
+    {
+        if self.showErrorsToUsers {
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.showErrorBlock(erTitle: error.domain, erMessage: error.description)
+            })
+        }
+    }
+    
     private func _show(title: String, message: String)
     {
         if self.showErrorsToUsers {
@@ -761,12 +766,4 @@ public class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate {
         self._stopFollowingDeviceOrientation()
     }
     
-//    lazy var videoOutput: AVCaptureVideoDataOutput? = {
-//        let output = AVCaptureVideoDataOutput()
-//        let format = kCVPixelFormatType_32BGRA
-//        output.videoSettings = [kCVPixelBufferPixelFormatTypeKey : format]
-//        output.alwaysDiscardsLateVideoFrames = true
-//        return output
-//        }()
-
 }
