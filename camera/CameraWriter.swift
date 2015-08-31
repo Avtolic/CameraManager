@@ -32,15 +32,16 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate{
         stopWithCompletionHandler(nil)
     }
     
+    var shouldStartWriting = false
     func start() throws {
         assetWriter = try createAssetWriter()!
         guard let writer = assetWriter else {
             throw NSError(domain: "CameraWriter", code: 0, userInfo: nil)
         }
-//        if !writer.startWriting() {
-//            throw writer.error ?? NSError(domain: "CameraWriter", code: writer.status.rawValue, userInfo: nil)
-//        }
-//        writer.startSessionAtSourceTime(kCMTimeZero)
+        if !writer.startWriting() {
+            throw writer.error ?? NSError(domain: "CameraWriter", code: writer.status.rawValue, userInfo: nil)
+        }
+        shouldStartWriting = true
     }
     
     func stopWithCompletionHandler(handler: ((url: NSURL, error: NSError?) -> Void)?) {
@@ -86,12 +87,17 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate{
     @objc func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-        if let assetWriter = assetWriter where assetWriter.status == .Unknown {
-            assetWriter.startWriting()
+        if let assetWriter = assetWriter where assetWriter.status == .Writing && shouldStartWriting
+        {
+            shouldStartWriting = false
             assetWriter.startSessionAtSourceTime(timestamp)
         }
         
-        if CMSampleBufferDataIsReady(sampleBuffer) && videoWriter.readyForMoreMediaData && videoWriter.appendSampleBuffer(sampleBuffer) {
+        if let assetWriter = assetWriter where
+            CMSampleBufferDataIsReady(sampleBuffer)
+            && assetWriter.status == .Writing
+            && videoWriter.readyForMoreMediaData
+            && videoWriter.appendSampleBuffer(sampleBuffer) {
             print("didOutputSampleBuffer")
         }
         
