@@ -17,6 +17,9 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     var audioOutput: AVCaptureAudioDataOutput!
     var audioWriter: AVAssetWriterInput!
     
+    private var _sessionStartTime: CMTime = kCMTimeZero
+    private var _lastSampleBufferTime: CMTime = kCMTimeZero
+    
     private let queue = dispatch_queue_create("CameraWriterSessionQueue", DISPATCH_QUEUE_SERIAL)
     
     override init() {
@@ -66,6 +69,10 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
         else if let handler = handler {
             handler(url: self.tempFileURL, error: self.assetWriter?.error ?? NSError(domain: "CameraWriter - Already stopped", code: 0, userInfo: nil))
         }
+    }
+    
+    var recordedDuration : CMTime {
+        return CMTimeSubtract(_lastSampleBufferTime, _sessionStartTime)
     }
     
     // MARK: - Encoding settings
@@ -127,8 +134,14 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
         {
             shouldStartWriting = false
             assetWriter.startSessionAtSourceTime(timestamp)
+            _sessionStartTime = timestamp
             print("startSessionAtSourceTime")
         }
+        
+        let duration = CMSampleBufferGetDuration(sampleBuffer)
+        let sampleTime = duration.flags == CMTimeFlags.Valid ? CMTimeAdd(timestamp, duration) : timestamp
+        _lastSampleBufferTime = CMTimeMaximum(_lastSampleBufferTime, sampleTime)
+        print("_time = \(CMTimeGetSeconds(recordedDuration))")
         
         if captureOutput == videoOutput
             && videoWriter.readyForMoreMediaData
@@ -138,7 +151,7 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
         else if captureOutput == audioOutput
             && audioWriter.readyForMoreMediaData
             && audioWriter.appendSampleBuffer(sampleBuffer) {
-                print("Audion added")
+                print("Audio added")
         }
         else
         {
