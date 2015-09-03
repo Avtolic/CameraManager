@@ -443,9 +443,7 @@ public class CameraManager: NSObject {
         case .StillImage:
             currentConnection = self.stillImageOutput?.connectionWithMediaType(AVMediaTypeVideo)
         case .VideoOnly, .VideoWithMic:
-            // TODO: fix via implementing activeConnection
-            //currentConnection = self._getMovieOutput().connectionWithMediaType(AVMediaTypeVideo)
-            return
+            currentConnection = self.cameraWriter?.videoOutput.connectionWithMediaType(AVMediaTypeVideo)
         }
         if let validPreviewLayer = self.previewLayer {
             if let validPreviewLayerConnection = validPreviewLayer.connection {
