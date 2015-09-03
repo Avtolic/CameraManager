@@ -71,9 +71,9 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     // MARK: - Encoding settings
     let captureOutputSettings = [kCVPixelBufferPixelFormatTypeKey as NSString : NSNumber(int: Int32(kCVPixelFormatType_32BGRA))]
     
-    let videoWriterSettings = [
-        AVVideoWidthKey : NSNumber(int: 1280),
-        AVVideoHeightKey : NSNumber(int: 720),
+    let videoWriterSettings : [String : AnyObject] = [
+        AVVideoWidthKey : 1280,
+        AVVideoHeightKey : 720,
         AVVideoCodecKey : AVVideoCodecH264,
         AVVideoScalingModeKey : AVVideoScalingModeResizeAspectFill,
         AVVideoCompressionPropertiesKey :  [AVVideoAverageBitRateKey : NSNumber(int: 700000),
@@ -121,41 +121,32 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
         print(CMTimeGetSeconds(timestamp))
         
-        guard CMSampleBufferDataIsReady(sampleBuffer) else { return }
+        guard let assetWriter = assetWriter where assetWriter.status == .Writing && CMSampleBufferDataIsReady(sampleBuffer) else { return }
         
-        if let assetWriter = assetWriter where assetWriter.status == .Writing && shouldStartWriting
+        if shouldStartWriting
         {
             shouldStartWriting = false
             assetWriter.startSessionAtSourceTime(timestamp)
             print("startSessionAtSourceTime")
         }
         
-        if let assetWriter = assetWriter where
-            CMSampleBufferDataIsReady(sampleBuffer)
-            && assetWriter.status == .Writing
-            && captureOutput == videoOutput
+        if captureOutput == videoOutput
             && videoWriter.readyForMoreMediaData
             && videoWriter.appendSampleBuffer(sampleBuffer) {
             print("Video added")
         }
-        else if let assetWriter = assetWriter where
-            CMSampleBufferDataIsReady(sampleBuffer)
-            && assetWriter.status == .Writing
-            && captureOutput == audioOutput
+        else if captureOutput == audioOutput
             && audioWriter.readyForMoreMediaData
             && audioWriter.appendSampleBuffer(sampleBuffer) {
                 print("Audion added")
         }
         else
         {
-            print("\(assetWriter?.status.rawValue) , \(assetWriter?.error)")
+            print("\(assetWriter.status.rawValue) , \(assetWriter.error)")
         }
         
 //        let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer)
 //        let dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription!)
-        
-        
-        
     }
     
     @objc func captureOutput(captureOutput: AVCaptureOutput!, didDropSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {

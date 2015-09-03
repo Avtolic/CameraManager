@@ -737,6 +737,7 @@ public class CameraManager: NSObject {
     {
         if self.showErrorsToUsers {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                print("CameraManager error - \(error)")
                 self.showErrorBlock(erTitle: error.domain, erMessage: error.description)
             })
         }
@@ -746,6 +747,7 @@ public class CameraManager: NSObject {
     {
         if self.showErrorsToUsers {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                print("CameraManager error - \(title): \(message)")
                 self.showErrorBlock(erTitle: title, erMessage: message)
             })
         }
