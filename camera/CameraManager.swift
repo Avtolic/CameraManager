@@ -88,7 +88,7 @@ public class CameraManager: NSObject {
                 
                 switch cameraDevice {
                 case .Front:
-                    if let validBackCamera = self.rearCamera where inputs.contains(validBackCamera) {
+                    if let validBackCamera = self.backCamera where inputs.contains(validBackCamera) {
                         validCaptureSession.removeInput(validBackCamera)
                     }
                     if let validFrontCamera = self.frontCamera where !inputs.contains(validFrontCamera) {
@@ -98,7 +98,7 @@ public class CameraManager: NSObject {
                     if let validFrontCamera = self.frontCamera where inputs.contains(validFrontCamera) {
                         validCaptureSession.removeInput(validFrontCamera)
                     }
-                    if let validBackCamera = self.rearCamera where !inputs.contains(validBackCamera) {
+                    if let validBackCamera = self.backCamera where !inputs.contains(validBackCamera) {
                         validCaptureSession.addInput(validBackCamera)
                     }
                 }
@@ -141,7 +141,7 @@ public class CameraManager: NSObject {
     private var cameraIsSetup = false
     private var cameraIsObservingDeviceOrientation = false
     
-    private var cameraWriter: CameraWriter? = nil
+    var cameraWriter: CameraWriter? = nil
     
     
     // MARK: - CameraManager
@@ -390,24 +390,6 @@ public class CameraManager: NSObject {
     
     // MARK: - CameraManager()
     
-//
-//    private var _videoOutput: AVCaptureVideoDataOutput? = nil
-//    public var videoOutput: AVCaptureVideoDataOutput {
-//        if let vOutput = _videoOutput, connection = vOutput.connectionWithMediaType(AVMediaTypeVideo) where connection.active {
-//            return vOutput
-//        }
-//        _videoOutput = AVCaptureVideoDataOutput()
-//        _videoOutput?.setSampleBufferDelegate(self, queue: sessionQueue)
-//        _videoOutput!.videoSettings = [kCVPixelBufferPixelFormatTypeKey as NSString : NSNumber(int: Int32(kCVPixelFormatType_32BGRA))]
-//        _videoOutput!.alwaysDiscardsLateVideoFrames = true
-//        
-//        captureSession?.beginConfiguration()
-//        captureSession?.addOutput(_videoOutput)
-//        captureSession?.commitConfiguration()
-//        
-//        return _videoOutput!
-//    }
-    
     private func _getStillImageOutput() -> AVCaptureStillImageOutput
     {
         var shouldReinitializeStillImageOutput = self.stillImageOutput == nil
@@ -558,7 +540,7 @@ public class CameraManager: NSObject {
         }
     }()
     
-    lazy var rearCamera: AVCaptureDeviceInput? = {
+    lazy var backCamera: AVCaptureDeviceInput? = {
         let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo) as! [AVCaptureDevice]
         let device = devices.filter{$0.position == .Back}.first
         do {
@@ -650,7 +632,7 @@ public class CameraManager: NSObject {
             self.captureSession?.commitConfiguration()
         }
         
-        if let device = rearCamera?.device where device.hasTorch && device.torchAvailable {
+        if let device = backCamera?.device where device.hasTorch && device.torchAvailable {
             do {
                 try device.lockForConfiguration()
                 defer {
@@ -678,7 +660,7 @@ public class CameraManager: NSObject {
             self.captureSession?.commitConfiguration()
         }
         
-        if let device = rearCamera?.device where device.hasFlash && device.flashAvailable && device.isFlashModeSupported(flashMode) {
+        if let device = backCamera?.device where device.hasFlash && device.flashAvailable && device.isFlashModeSupported(flashMode) {
             do {
                 try device.lockForConfiguration()
                 defer {
