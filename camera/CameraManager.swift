@@ -324,6 +324,7 @@ public class CameraManager: NSObject {
             do {
                 cameraWriter = CameraWriter()
                 captureSession?.addOutput(cameraWriter?.videoOutput)
+                captureSession?.addOutput(cameraWriter?.audioOutput)
                 try cameraWriter?.start()
             } catch let error {
                 self._showError(error as NSError)
