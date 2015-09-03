@@ -62,10 +62,14 @@ class CameraWriter : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate{
     let captureOutputSettings = [kCVPixelBufferPixelFormatTypeKey as NSString : NSNumber(int: Int32(kCVPixelFormatType_32BGRA))]
     
     let videoWriterSettings = [
-        AVVideoWidthKey: NSNumber(int: 640),
-        AVVideoHeightKey: NSNumber(int: 640),
+        AVVideoWidthKey: NSNumber(int: 1280),
+        AVVideoHeightKey: NSNumber(int: 720),
         AVVideoCodecKey: AVVideoCodecH264,
-        AVVideoScalingModeKey : AVVideoScalingModeResizeAspectFill]
+        AVVideoScalingModeKey : AVVideoScalingModeResizeAspectFill,
+        AVVideoCompressionPropertiesKey :  [AVVideoAverageBitRateKey : NSNumber(int: 600000),
+                                            AVVideoMaxKeyFrameIntervalKey : NSNumber(int: 40),
+                                            AVVideoProfileLevelKey : AVVideoProfileLevelH264HighAutoLevel]
+    ]
     
     var tempFileURL: NSURL = {
         let tempDirURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
