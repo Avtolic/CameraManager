@@ -87,7 +87,7 @@ class FQCameraViewController: UIViewController {
                 }
                 else
                 {
-                    self.delegate?.cameraController?(self, didFinishRecordingVideoAtURL:videoURL)
+                    self.delegate?.cameraController?(self, didFinishRecordingVideoAtURL:videoURL!)
                 }
             })
         }
@@ -115,10 +115,9 @@ class FQCameraViewController: UIViewController {
     }
     
     @objc func timerUpdated(timer: NSTimer) {
-        let timestamp = cameraManager.recordedDuration
+        let timestamp = cameraManager.cameraWriter?.recordedDuration ?? kCMTimeZero
         let sec = Int(CMTimeGetSeconds(timestamp))
-        let avg = cameraManager.recordedFileSize / Int64(1000 * max(1, sec))
-        print(String(format: "%02d:%02d  size = %d   %d kB/sec", sec / 60, sec % 60, cameraManager.recordedFileSize, avg))
+        print(String(format: "%02d:%02d", sec / 60, sec % 60))
         timerLabel.text = String(format: "%02d:%02d", sec / 60, sec % 60)
     }
     

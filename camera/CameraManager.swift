@@ -127,16 +127,6 @@ public class CameraManager: NSObject {
             self._setupOutputMode(cameraOutputMode)
         }
     }
-
-    public var recordedDuration : CMTime {
-//        return movieOutput?.recordedDuration ?? kCMTimeZero
-        return kCMTimeZero
-    }
-    
-    public var recordedFileSize : Int64 {
-        //return movieOutput?.recordedFileSize ?? 0 
-        return 0
-    }
     
     // MARK: - Private properties
 
