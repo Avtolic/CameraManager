@@ -14,6 +14,9 @@
 		454C1F6719E8316A00C81915 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454C1F6619E8316A00C81915 /* CameraManager.swift */; };
 		D20B31E71B8F37310055DF54 /* FQCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20B31E51B8F37310055DF54 /* FQCameraViewController.swift */; };
 		D20B31E81B8F37310055DF54 /* FQCameraViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D20B31E61B8F37310055DF54 /* FQCameraViewController.xib */; };
+		D26AC5DE1B90D5E000593283 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D26AC5DD1B90D5E000593283 /* Main.storyboard */; };
+		D2C0EB1F1B919CBD00B2645F /* CameraWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C0EB1E1B919CBD00B2645F /* CameraWriter.swift */; };
+		D2C0EB201B919CBD00B2645F /* CameraWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C0EB1E1B919CBD00B2645F /* CameraWriter.swift */; };
 		D71DE8861AD677A7001E62F1 /* CameraManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D71DE8851AD677A7001E62F1 /* CameraManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D71DE8981AD677A8001E62F1 /* CameraManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D71DE8811AD677A7001E62F1 /* CameraManager.framework */; };
 		D71DE8991AD677A8001E62F1 /* CameraManager.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D71DE8811AD677A7001E62F1 /* CameraManager.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -54,6 +57,8 @@
 		454C1F6619E8316A00C81915 /* CameraManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		D20B31E51B8F37310055DF54 /* FQCameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FQCameraViewController.swift; sourceTree = "<group>"; };
 		D20B31E61B8F37310055DF54 /* FQCameraViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FQCameraViewController.xib; sourceTree = "<group>"; };
+		D26AC5DD1B90D5E000593283 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		D2C0EB1E1B919CBD00B2645F /* CameraWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraWriter.swift; sourceTree = "<group>"; };
 		D71DE8811AD677A7001E62F1 /* CameraManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CameraManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D71DE8841AD677A7001E62F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D71DE8851AD677A7001E62F1 /* CameraManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraManager.h; sourceTree = "<group>"; };
@@ -99,12 +104,14 @@
 		454C1F4319E82E2500C81915 /* camera */ = {
 			isa = PBXGroup;
 			children = (
+				D26AC5DD1B90D5E000593283 /* Main.storyboard */,
 				454C1F4619E82E2500C81915 /* AppDelegate.swift */,
 				45A23C191A656BE600FB48F3 /* Example app view controllers */,
-				454C1F6619E8316A00C81915 /* CameraManager.swift */,
 				454C1F4D19E82E2500C81915 /* Images.xcassets */,
 				454C1F4F19E82E2500C81915 /* LaunchScreen.xib */,
 				454C1F4419E82E2500C81915 /* Supporting Files */,
+				454C1F6619E8316A00C81915 /* CameraManager.swift */,
+				D2C0EB1E1B919CBD00B2645F /* CameraWriter.swift */,
 			);
 			path = camera;
 			sourceTree = "<group>";
@@ -242,6 +249,7 @@
 				454C1F5119E82E2500C81915 /* LaunchScreen.xib in Resources */,
 				D20B31E81B8F37310055DF54 /* FQCameraViewController.xib in Resources */,
 				454C1F4E19E82E2500C81915 /* Images.xcassets in Resources */,
+				D26AC5DE1B90D5E000593283 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +267,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2C0EB1F1B919CBD00B2645F /* CameraWriter.swift in Sources */,
 				454C1F4919E82E2500C81915 /* ViewController.swift in Sources */,
 				454C1F6719E8316A00C81915 /* CameraManager.swift in Sources */,
 				D20B31E71B8F37310055DF54 /* FQCameraViewController.swift in Sources */,
@@ -271,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D71DE8A11AD677EF001E62F1 /* CameraManager.swift in Sources */,
+				D2C0EB201B919CBD00B2645F /* CameraWriter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
