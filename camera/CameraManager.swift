@@ -2,8 +2,8 @@
 //  CameraManager.swift
 //  camera
 //
-//  Created by Natalia Terlecka on 10/10/14.
-//  Copyright (c) 2014 imaginaryCloud. All rights reserved.
+//  Created by Yury on 29/08/15.
+//  Copyright (c). All rights reserved.
 //
 
 import UIKit

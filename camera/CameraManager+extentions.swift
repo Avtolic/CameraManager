@@ -9,9 +9,6 @@
 import Foundation
 import AVFoundation
 
-public enum CameraOutputQuality: Int {
-    case Low, Medium, High
-}
 
 extension CameraManager {
 

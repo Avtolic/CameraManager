@@ -3,7 +3,7 @@
 //  camera
 //
 //  Created by Yury on 29/08/15.
-//  Copyright © 2015 imaginaryCloud. All rights reserved.
+//  Copyright © 2015. All rights reserved.
 //
 
 import Foundation
