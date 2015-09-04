@@ -61,7 +61,7 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.navigationController?.navigationBar.hidden = true
-        self.cameraManager.resumeCaptureSession()
+        self.cameraManager.startCamera()
     }
     
     override func viewWillDisappear(animated: Bool)

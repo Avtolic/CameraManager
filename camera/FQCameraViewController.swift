@@ -54,7 +54,7 @@ class FQCameraViewController: UIViewController {
     {
         super.viewWillAppear(animated)
         
-        cameraManager.resumeCaptureSession()
+        cameraManager.startCamera()
     }
     
     override func viewWillDisappear(animated: Bool)

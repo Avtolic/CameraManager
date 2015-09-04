@@ -174,30 +174,6 @@ public class CameraManager {
     }
 
     /**
-    Resumes capture session.
-    */
-    public func resumeCaptureSession()
-    {
-        if !captureSession.running {
-            captureSession.startRunning()
-            _startFollowingDeviceOrientation()
-        }
-//        } else {
-//            if self._canLoadCamera() {
-//                if self.cameraIsSetup {
-//                    self.stopAndRemoveCaptureSession()
-//                }
-//                self._setupCamera({Void -> Void in
-//                    if let validEmbedingView = self.embedingView {
-//                        self._addPreeviewLayerToView(validEmbedingView)
-//                    }
-//                    self._startFollowingDeviceOrientation()
-//                })
-//            }
-//        }
-    }
-
-    /**
     Captures still image from currently running capture session.
 
     :param: imageCompletition Completition block containing the captured UIImage
@@ -352,20 +328,21 @@ public class CameraManager {
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         _setupOutputs()
         setFlashMode(self.flashMode)
-        
-        _startFollowingDeviceOrientation()
-        _orientationChanged()
     }
     
     public func startCamera()
     {
-        captureSession.startRunning()
+        if !captureSession.running {
+            captureSession.startRunning()
+            _startFollowingDeviceOrientation()
+            _orientationChanged()
+        }
     }
     
     public func startCameraAsynchWithCompletion(completition: Void -> Void)
     {
         dispatch_async(sessionQueue, {
-            self.captureSession.startRunning()
+            self.startCamera()
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 completition()
             })
