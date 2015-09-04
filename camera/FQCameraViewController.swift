@@ -93,6 +93,10 @@ class FQCameraViewController: UIViewController {
         }
     }
     
+    @IBAction func cancelButtonPressed() {
+        self.delegate?.cameraControllerDidCancel?(self)
+    }
+    
     // MARK: - Autorotation
     override func shouldAutorotate() -> Bool {
         return true
