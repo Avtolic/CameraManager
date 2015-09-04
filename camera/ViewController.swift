@@ -30,6 +30,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        cameraManager.startCamera()
+        
         self.cameraManager.showAccessPermissionPopupAutomatically = false
         
         self.askForPermissionsButton.hidden = true
@@ -37,16 +39,20 @@ class ViewController: UIViewController {
 
         let currentCameraState = self.cameraManager.currentCameraStatus()
         
-        if currentCameraState == .NotDetermined {
+//        if currentCameraState == .NotDetermined {
             self.askForPermissionsButton.hidden = false
             self.askForPermissionsLabel.hidden = false
-        } else if (currentCameraState == .Ready) {
+//        } else if (currentCameraState == .Ready) {
             self.addCameraToView()
-        }
+//        }
         if !self.cameraManager.hasFlash {
             self.flashModeButton.enabled = false
             self.flashModeButton.setTitle("No flash", forState: UIControlState.Normal)
         }
+        self.cameraManager.flashMode = .On
+        self.cameraManager.flashMode = .On
+        self.cameraManager.flashMode = .On
+//        self.cameraManager.cameraOutputQuality = .Low
         
     }
     
@@ -108,13 +114,13 @@ class ViewController: UIViewController {
         switch (self.cameraManager.cameraOutputMode) {
         case .StillImage:
             self.cameraManager.capturePictureWithCompletition({ (image, error) -> Void in
-                let vc: ImageViewController? = self.storyboard?.instantiateViewControllerWithIdentifier("ImageVC") as? ImageViewController
-                if let validVC: ImageViewController = vc {
-                    if let capturedImage = image {
-                        validVC.image = capturedImage
-                        self.navigationController?.pushViewController(validVC, animated: true)
-                    }
-                }
+//                let vc: ImageViewController? = self.storyboard?.instantiateViewControllerWithIdentifier("ImageVC") as? ImageViewController
+//                if let validVC: ImageViewController = vc {
+//                    if let capturedImage = image {
+//                        validVC.image = capturedImage
+//                        self.navigationController?.pushViewController(validVC, animated: true)
+//                    }
+//                }
             })
         case .VideoWithMic, .VideoOnly:
             sender.selected = !sender.selected
@@ -171,14 +177,6 @@ class ViewController: UIViewController {
     
     @IBAction func changeCameraQuality(sender: UIButton)
     {
-        switch (self.cameraManager.changeQualityMode()) {
-        case .High:
-            sender.setTitle("High", forState: UIControlState.Normal)
-        case .Low:
-            sender.setTitle("Low", forState: UIControlState.Normal)
-        case .Medium:
-            sender.setTitle("Medium", forState: UIControlState.Normal)
-        }
     }
 }
 

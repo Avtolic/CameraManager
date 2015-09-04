@@ -25,7 +25,7 @@ public enum CameraOutputMode {
 }
 
 /// Class for handling iDevices custom camera usage
-public class CameraManager: NSObject {
+public class CameraManager {
 
     // MARK: - Public properties
 
@@ -103,11 +103,10 @@ public class CameraManager: NSObject {
 
     private let sessionQueue = dispatch_queue_create("CameraSessionQueue", DISPATCH_QUEUE_SERIAL)
 
-    private var stillImageOutput: AVCaptureStillImageOutput = AVCaptureStillImageOutput()
-    private var previewLayer: AVCaptureVideoPreviewLayer?
-    private var library: ALAssetsLibrary?
+    private var stillImageOutput = AVCaptureStillImageOutput()
+    private var previewLayer: AVCaptureVideoPreviewLayer
+    private var library = ALAssetsLibrary()
 
-    private var cameraIsSetup = false
     private var cameraIsObservingDeviceOrientation = false
     
     var cameraWriter: CameraWriter? = CameraWriter()
@@ -130,20 +129,14 @@ public class CameraManager: NSObject {
     public func addPreviewLayerToView(view: UIView, newCameraOutputMode: CameraOutputMode) -> CameraState
     {
         if _canLoadCamera() {
-            if let _ = embedingView {
-                if let validPreviewLayer = previewLayer {
-                    validPreviewLayer.removeFromSuperlayer()
-                }
+            if let _ = previewLayer.superlayer {
+                previewLayer.removeFromSuperlayer()
             }
-            if cameraIsSetup {
-                _addPreeviewLayerToView(view)
-                cameraOutputMode = newCameraOutputMode
-            } else {
-                _setupCamera({ Void -> Void in
-                    self._addPreeviewLayerToView(view)
-                    self.cameraOutputMode = newCameraOutputMode
-                })
-            }
+            embedingView = view
+            previewLayer.frame = view.layer.bounds
+            view.clipsToBounds = true
+            view.layer.addSublayer(previewLayer)
+            cameraOutputMode = newCameraOutputMode
         }
         return _checkIfCameraIsAvailable()
     }
@@ -185,7 +178,7 @@ public class CameraManager: NSObject {
     */
     public func resumeCaptureSession()
     {
-        if !captureSession.running && cameraIsSetup {
+        if !captureSession.running {
             captureSession.startRunning()
             _startFollowingDeviceOrientation()
         }
@@ -205,60 +198,42 @@ public class CameraManager: NSObject {
     }
 
     /**
-    Stops running capture session and removes all setup devices, inputs and outputs.
-    */
-    public func stopAndRemoveCaptureSession()
-    {
-        stopCaptureSession()
-        cameraDevice = .Back
-        cameraIsSetup = false
-        previewLayer = nil
-        cameraWriter = nil
-    }
-
-    /**
     Captures still image from currently running capture session.
 
     :param: imageCompletition Completition block containing the captured UIImage
     */
     public func capturePictureWithCompletition(imageCompletition: (UIImage?, NSError?) -> Void)
     {
-        if cameraIsSetup {
-            if cameraOutputMode == .StillImage {
-                dispatch_async(self.sessionQueue, {
-                    self.stillImageOutput.captureStillImageAsynchronouslyFromConnection(self.stillImageOutput.connectionWithMediaType(AVMediaTypeVideo), completionHandler: { [weak self] (sample: CMSampleBuffer!, error: NSError!) -> Void in
-                        if (error != nil) {
-                            dispatch_async(dispatch_get_main_queue(), {
-                                if let weakSelf = self {
-                                    weakSelf._show(NSLocalizedString("Error", comment:""), message: error.localizedDescription)
-                                }
-                            })
-                            imageCompletition(nil, error)
-                        } else {
-                            let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sample)
+        if cameraOutputMode == .StillImage {
+            dispatch_async(self.sessionQueue, {
+                self.stillImageOutput.captureStillImageAsynchronouslyFromConnection(self.stillImageOutput.connectionWithMediaType(AVMediaTypeVideo), completionHandler: { [weak self] (sample: CMSampleBuffer!, error: NSError!) -> Void in
+                    if (error != nil) {
+                        dispatch_async(dispatch_get_main_queue(), {
                             if let weakSelf = self {
-                                if weakSelf.writeFilesToPhoneLibrary {
-                                    if let validLibrary = weakSelf.library {
-                                        validLibrary.writeImageDataToSavedPhotosAlbum(imageData, metadata:nil, completionBlock: {
-                                            (picUrl, error) -> Void in
-                                            if (error != nil) {
-                                                dispatch_async(dispatch_get_main_queue(), {
-                                                    weakSelf._show(NSLocalizedString("Error", comment:""), message: error.localizedDescription)
-                                                })
-                                            }
+                                weakSelf._show(NSLocalizedString("Error", comment:""), message: error.localizedDescription)
+                            }
+                        })
+                        imageCompletition(nil, error)
+                    } else {
+                        let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sample)
+                        if let weakSelf = self {
+                            if weakSelf.writeFilesToPhoneLibrary {
+                                weakSelf.library.writeImageDataToSavedPhotosAlbum(imageData, metadata:nil) {
+                                    (picUrl, error) -> Void in
+                                    if (error != nil) {
+                                        dispatch_async(dispatch_get_main_queue(), {
+                                            weakSelf._show(NSLocalizedString("Error", comment:""), message: error.localizedDescription)
                                         })
                                     }
                                 }
                             }
-                            imageCompletition(UIImage(data: imageData), nil)
                         }
-                    })
+                        imageCompletition(UIImage(data: imageData), nil)
+                    }
                 })
-            } else {
-                _show(NSLocalizedString("Capture session output mode video", comment:""), message: NSLocalizedString("I can't take any picture", comment:""))
-            }
+            })
         } else {
-            _show(NSLocalizedString("No capture session setup", comment:""), message: NSLocalizedString("I can't take any picture", comment:""))
+            _show(NSLocalizedString("Capture session output mode video", comment:""), message: NSLocalizedString("I can't take any picture", comment:""))
         }
     }
 
@@ -289,9 +264,9 @@ public class CameraManager: NSObject {
                 self._show(NSLocalizedString("Unable to save video to the iPhone", comment:""), message: error.localizedDescription)
                 completition(videoURL: nil, error: error)
             }
-            else if let validLibrary = self.library where self.writeFilesToPhoneLibrary
+            else if self.writeFilesToPhoneLibrary
             {
-                validLibrary.writeVideoAtPathToSavedPhotosAlbum(url){ (assetURL, error) -> Void in
+                self.library.writeVideoAtPathToSavedPhotosAlbum(url){ (assetURL, error) -> Void in
                     if let error = error {
                         self._show(NSLocalizedString("Unable to save video to the iPhone.", comment:""), message: error.localizedDescription)
                     }
@@ -325,23 +300,21 @@ public class CameraManager: NSObject {
         case .VideoOnly, .VideoWithMic:
             currentConnection = cameraWriter?.videoOutput.connectionWithMediaType(AVMediaTypeVideo)
         }
-        if let validPreviewLayer = previewLayer {
-            if let validPreviewLayerConnection = validPreviewLayer.connection {
-                if validPreviewLayerConnection.supportsVideoOrientation {
-                    validPreviewLayerConnection.videoOrientation = _currentVideoOrientation()
-                }
+        if let validPreviewLayerConnection = previewLayer.connection {
+            if validPreviewLayerConnection.supportsVideoOrientation {
+                validPreviewLayerConnection.videoOrientation = _currentVideoOrientation()
             }
-            if let validOutputLayerConnection = currentConnection {
-                if validOutputLayerConnection.supportsVideoOrientation {
-                    validOutputLayerConnection.videoOrientation = _currentVideoOrientation()
-                }
-            }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                if let validEmbedingView = self.embedingView {
-                    validPreviewLayer.frame = validEmbedingView.bounds
-                }
-            })
         }
+        if let validOutputLayerConnection = currentConnection {
+            if validOutputLayerConnection.supportsVideoOrientation {
+                validOutputLayerConnection.videoOrientation = _currentVideoOrientation()
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            if let validEmbedingView = self.embedingView {
+                self.previewLayer.frame = validEmbedingView.bounds
+            }
+        })
     }
 
     private func _currentVideoOrientation() -> AVCaptureVideoOrientation
@@ -363,32 +336,39 @@ public class CameraManager: NSObject {
         return currentCameraState == .Ready || (currentCameraState == .NotDetermined && showAccessPermissionPopupAutomatically)
     }
 
-    private func _setupCamera(completition: Void -> Void)
+    init () {
+        captureSession.beginConfiguration()
+        
+        let sessionPreset = AVCaptureSessionPresetHigh
+        if captureSession.canSetSessionPreset(sessionPreset) {
+            captureSession.sessionPreset = sessionPreset
+        } else {
+            print("Camera preset not supported - \(sessionPreset)")
+        }
+        
+        captureSession.commitConfiguration()
+        
+        previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
+        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        _setupOutputs()
+        setFlashMode(self.flashMode)
+        
+        _startFollowingDeviceOrientation()
+        _orientationChanged()
+    }
+    
+    public func startCamera()
     {
-        // TODO: Fix possible synchronisation crash if camera's settings like flash are changed from main queue while this setup is not finished yet
+        captureSession.startRunning()
+    }
+    
+    public func startCameraAsynchWithCompletion(completition: Void -> Void)
+    {
         dispatch_async(sessionQueue, {
-            self.captureSession.beginConfiguration()
-            
-            let sessionPreset = AVCaptureSessionPresetHigh
-            if self.captureSession.canSetSessionPreset(sessionPreset) {
-                self.captureSession.sessionPreset = sessionPreset
-            } else {
-                print("Camera preset not supported - \(sessionPreset)")
-            }
-
-            self.stillImageOutput = AVCaptureStillImageOutput()
-            self.library = ALAssetsLibrary()
-
-            self._setupOutputs()
-            self._setupPreviewLayer()
-            self.captureSession.commitConfiguration()
-            self.setFlashMode(self.flashMode)
             self.captureSession.startRunning()
-            self._startFollowingDeviceOrientation()
-            self.cameraIsSetup = true
-            self._orientationChanged()
-            
-            completition()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                completition()
+            })
         })
     }
 
@@ -406,19 +386,6 @@ public class CameraManager: NSObject {
             NSNotificationCenter.defaultCenter().removeObserver(self, name: UIDeviceOrientationDidChangeNotification, object: nil)
             cameraIsObservingDeviceOrientation = false
         }
-    }
-
-    private func _addPreeviewLayerToView(view: UIView)
-    {
-        embedingView = view
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            guard let _ = self.previewLayer else {
-                return
-            }
-            self.previewLayer!.frame = view.layer.bounds
-            view.clipsToBounds = true
-            view.layer.addSublayer(self.previewLayer!)
-        })
     }
 
     private func _checkIfCameraIsAvailable() -> CameraState
@@ -513,12 +480,6 @@ public class CameraManager: NSObject {
         captureSession.commitConfiguration()
         _orientationChanged()
     }
-
-    private func _setupPreviewLayer()
-    {
-        previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
-    }
     
     func setTorchLevel(torchLevel: Float)
     {
@@ -586,7 +547,6 @@ public class CameraManager: NSObject {
     }
     
     deinit {
-        stopAndRemoveCaptureSession()
-        _stopFollowingDeviceOrientation()
+        stopCaptureSession()
     }
 }
