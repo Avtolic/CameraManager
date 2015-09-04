@@ -295,12 +295,15 @@ public class CameraManager {
 
     private func _currentVideoOrientation() -> AVCaptureVideoOrientation
     {
-//        return .LandscapeRight
         switch UIDevice.currentDevice().orientation {
         case .LandscapeLeft:
             return .LandscapeRight
         case .LandscapeRight:
             return .LandscapeLeft
+        case .Portrait:
+            return .Portrait
+        case .PortraitUpsideDown:
+            return .PortraitUpsideDown
         default:
             return .Portrait
         }
