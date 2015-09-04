@@ -437,7 +437,9 @@ public class CameraManager: NSObject {
                     print("Camera preset not supported - \(sessionPreset)")
                 }
 
-                self._setupOutputs()
+                self.stillImageOutput = AVCaptureStillImageOutput()
+                self.library = ALAssetsLibrary()
+
                 self._setupOutputMode(self.cameraOutputMode)
                 self._setupPreviewLayer()
                 validCaptureSession.commitConfiguration()
@@ -543,9 +545,9 @@ public class CameraManager: NSObject {
                 self.captureSession?.removeOutput(validStillImageOutput)
             }
         case .VideoOnly, .VideoWithMic:
-//            if let validMovieOutput = self.movieOutput {
-//                self.captureSession?.removeOutput(validMovieOutput)
-//            }
+            if let validMovieOutput = self.cameraWriter?.videoOutput {
+                self.captureSession?.removeOutput(validMovieOutput)
+            }
             if oldCameraOutputMode == .VideoWithMic {
                 if let validMic = self.mic {
                     self.captureSession?.removeInput(validMic)
@@ -556,9 +558,6 @@ public class CameraManager: NSObject {
         // configure new devices
         switch cameraOutputMode {
         case .StillImage:
-            if (self.stillImageOutput == nil) {
-                self._setupOutputs()
-            }
             if let validStillImageOutput = self.stillImageOutput {
                 self.captureSession?.addOutput(validStillImageOutput)
             }
@@ -573,20 +572,6 @@ public class CameraManager: NSObject {
         }
         self.captureSession?.commitConfiguration()
         self._orientationChanged()
-    }
-
-    // TODO: убрать нахрен
-    private func _setupOutputs()
-    {
-        if (self.stillImageOutput == nil) {
-            self.stillImageOutput = AVCaptureStillImageOutput()
-        }
-//        if (self.movieOutput == nil) {
-//            self.movieOutput = AVCaptureMovieFileOutput()
-//        }
-        if self.library == nil {
-            self.library = ALAssetsLibrary()
-        }
     }
 
     private func _setupPreviewLayer()
