@@ -24,10 +24,6 @@ public enum CameraOutputMode {
     case StillImage, VideoWithMic, VideoOnly
 }
 
-public enum CameraOutputQuality: Int {
-    case Low, Medium, High
-}
-
 /// Class for handling iDevices custom camera usage
 public class CameraManager: NSObject {
 
@@ -111,13 +107,6 @@ public class CameraManager: NSObject {
     public var flashMode: AVCaptureFlashMode = .Off {
         didSet {
             self.setFlashMode(flashMode)
-        }
-    }
-
-    /// Property to change camera output quality.
-    public var cameraOutputQuality: CameraOutputQuality = CameraOutputQuality.High {
-        didSet {
-            self._updateCameraQualityMode()
         }
     }
 
@@ -365,29 +354,7 @@ public class CameraManager: NSObject {
     {
         return self._checkIfCameraIsAvailable()
     }
-    
-    /**
-    Change current flash mode to next value from available ones.
-    
-    :returns: Current flash mode: Off / On / Auto
-    */
-    public func changeFlashMode() -> AVCaptureFlashMode
-    {
-        self.flashMode = AVCaptureFlashMode(rawValue: (self.flashMode.rawValue+1)%3)!
-        return self.flashMode
-    }
-    
-    /**
-    Change current output quality mode to next value from available ones.
-    
-    :returns: Current quality mode: Low / Medium / High
-    */
-    public func changeQualityMode() -> CameraOutputQuality
-    {
-        self.cameraOutputQuality = CameraOutputQuality(rawValue: (self.cameraOutputQuality.rawValue+1)%3)!
-        return self.cameraOutputQuality
-    }
-    
+            
     // MARK: - CameraManager()
     
     private func _getStillImageOutput() -> AVCaptureStillImageOutput
@@ -462,14 +429,19 @@ public class CameraManager: NSObject {
         dispatch_async(sessionQueue, {
             if let validCaptureSession = self.captureSession {
                 validCaptureSession.beginConfiguration()
-                validCaptureSession.sessionPreset = AVCaptureSessionPresetHigh
+                
+                let sessionPreset = AVCaptureSessionPresetHigh
+                if validCaptureSession.canSetSessionPreset(sessionPreset) {
+                    validCaptureSession.sessionPreset = AVCaptureSessionPresetHigh
+                } else {
+                    print("Camera preset not supported - \(sessionPreset)")
+                }
+
                 self._setupOutputs()
                 self._setupOutputMode(self.cameraOutputMode)
-                self._updateCameraQualityMode()
                 self._setupPreviewLayer()
                 validCaptureSession.commitConfiguration()
                 self.setFlashMode(self.flashMode)
-                self._updateCameraQualityMode()
                 validCaptureSession.startRunning()
                 self._startFollowingDeviceOrientation()
                 self.cameraIsSetup = true
@@ -600,10 +572,10 @@ public class CameraManager: NSObject {
             }
         }
         self.captureSession?.commitConfiguration()
-        self._updateCameraQualityMode()
         self._orientationChanged()
     }
-    
+
+    // TODO: убрать нахрен
     private func _setupOutputs()
     {
         if (self.stillImageOutput == nil) {
@@ -675,34 +647,6 @@ public class CameraManager: NSObject {
         }
     }
     
-    private func _updateCameraQualityMode()
-    {
-        if let validCaptureSession = self.captureSession {
-            var sessionPreset = AVCaptureSessionPresetLow
-            switch (cameraOutputQuality) {
-            case CameraOutputQuality.Low:
-                sessionPreset = AVCaptureSessionPresetLow
-            case CameraOutputQuality.Medium:
-                sessionPreset = AVCaptureSessionPresetMedium
-            case CameraOutputQuality.High:
-                if self.cameraOutputMode == .StillImage {
-                    sessionPreset = AVCaptureSessionPresetPhoto
-                } else {
-                    sessionPreset = AVCaptureSessionPresetHigh
-                }
-            }
-            if validCaptureSession.canSetSessionPreset(sessionPreset) {
-                validCaptureSession.beginConfiguration()
-                validCaptureSession.sessionPreset = sessionPreset
-                validCaptureSession.commitConfiguration()
-            } else {
-                self._show(NSLocalizedString("Preset not supported", comment:""), message: NSLocalizedString("Camera preset not supported. Please try another one.", comment:""))
-            }
-        } else {
-            self._show(NSLocalizedString("Camera error", comment:""), message: NSLocalizedString("No valid capture session found, I can't take any pictures or videos.", comment:""))
-        }
-    }
-
     private func _showError(error: NSError)
     {
         if self.showErrorsToUsers {
