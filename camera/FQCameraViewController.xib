@@ -21,7 +21,7 @@
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UDm-PN-Ccf" userLabel="Preview">
                     <rect key="frame" x="0.0" y="131" width="600" height="338"/>
-                    <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="UDm-PN-Ccf" secondAttribute="height" multiplier="568:320" id="vmE-X2-lct"/>
                     </constraints>
